@@ -20,7 +20,7 @@ func SetupAcceptCmd(orderService *services.OrderService) {
 	_ = acceptCmd.MarkFlagRequired(FlagUserID)
 	_ = acceptCmd.MarkFlagRequired(FlagExpires)
 
-	acceptCmd.RunE = func(cmd *cobra.Command, args []string) error {
+	acceptCmd.RunE = func(cmd *cobra.Command, args []string) (err error) {
 		orderID, err := GetFlag(cmd, FlagOrderID)
 		if err != nil {
 			return err
@@ -36,11 +36,11 @@ func SetupAcceptCmd(orderService *services.OrderService) {
 			return err
 		}
 
-		if err := orderService.AcceptOrder(orderID, userID, expire); err != nil {
+		if err = orderService.AcceptOrder(orderID, userID, expire); err != nil {
 			return err
 		}
 
-		fmt.Printf("Order %s accepted\n", orderID)
+		fmt.Printf("ORDER_ACCEPTED: %s\n", orderID)
 
 		return nil
 	}

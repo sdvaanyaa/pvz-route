@@ -8,8 +8,14 @@ import (
 var (
 	ErrOrderAlreadyExists = errors.New("order already exists")
 	ErrOrderExpired       = errors.New("order expired")
+	ErrOrderNotFound      = errors.New("order not found")
 )
 
 type Storage interface {
 	SaveOrder(order *models.Order) error
+	GetOrder(orderID string) (*models.Order, error)
+	DeleteOrder(orderID string) error
+
+	SaveOrders(orders []*models.Order) error
+	GetOrders() ([]*models.Order, error)
 }
