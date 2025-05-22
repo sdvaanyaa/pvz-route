@@ -22,17 +22,17 @@ func SetupProcessCmd(orderService *services.OrderService) {
 	_ = processCmd.MarkFlagRequired(FlagExpires)
 
 	processCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := GetFlag(cmd, FlagUserID)
+		userID, err := GetFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}
 
-		action, err := GetFlag(cmd, FlagAction)
+		action, err := GetFlagString(cmd, FlagAction)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}
 
-		orderIDs, err := GetFlag(cmd, FlagOrderIDs)
+		orderIDs, err := GetFlagString(cmd, FlagOrderIDs)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}

@@ -17,7 +17,7 @@ func SetupReturnCmd(orderService *services.OrderService) {
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
 
 	returnCmd.Run = func(cmd *cobra.Command, args []string) {
-		orderID, err := GetFlag(cmd, FlagOrderID)
+		orderID, err := GetFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}

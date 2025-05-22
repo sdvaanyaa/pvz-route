@@ -21,17 +21,17 @@ func SetupAcceptCmd(orderService *services.OrderService) {
 	_ = acceptCmd.MarkFlagRequired(FlagExpires)
 
 	acceptCmd.Run = func(cmd *cobra.Command, args []string) {
-		orderID, err := GetFlag(cmd, FlagOrderID)
+		orderID, err := GetFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}
 
-		userID, err := GetFlag(cmd, FlagUserID)
+		userID, err := GetFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}
 
-		expire, err := GetFlag(cmd, FlagExpires)
+		expire, err := GetFlagString(cmd, FlagExpires)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 		}

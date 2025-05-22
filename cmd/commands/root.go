@@ -19,6 +19,7 @@ func Setup(orderService *services.OrderService) {
 	SetupAcceptCmd(orderService)
 	SetupReturnCmd(orderService)
 	SetupProcessCmd(orderService)
+	SetupListOrdersCmd(orderService)
 }
 
 func Execute() {
@@ -45,9 +46,7 @@ func Execute() {
 		os.Args = []string{os.Args[0]}
 		os.Args = append(os.Args, args...)
 
-		if err := rootCmd.Execute(); err != nil {
-			log.Printf("cannot execute root command: %s", err)
-		}
+		_ = rootCmd.Execute()
 	}
 
 	if err := scanner.Err(); err != nil {

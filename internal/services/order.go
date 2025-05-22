@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage"
+	"sort"
 	"time"
 )
 
@@ -136,4 +137,54 @@ func (s *OrderService) ProcessOrder(userID, orderID, action string) error {
 	}
 
 	return nil
+}
+
+func (s *OrderService) ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error) {
+	const op = "services.order.ListOrders"
+
+	if userID == "" {
+		return nil, 0, fmt.Errorf("%s: %w", op, ErrEmptyUserID)
+	}
+
+	orders, err := s.storage.GetOrdersByUser(userID)
+	if err != nil {
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if inPVZ {
+		filtered := make([]*models.Order, 0, len(orders))
+
+		for _, order := range orders {
+			if order.Status == models.StatusAccepted {
+				filtered = append(filtered, order)
+			}
+		}
+
+		orders = filtered
+	}
+
+	sort.Slice(orders, func(i, j int) bool {
+		return orders[i].CreatedAt.After(orders[j].CreatedAt)
+	})
+
+	if last > 0 {
+		orders = orders[:min(last, len(orders))]
+	}
+
+	total := len(orders)
+
+	if limit > 0 {
+		start := (page - 1) * limit
+		if start >= len(orders) {
+			orders = []*models.Order{}
+		} else {
+			end := start + limit
+			if end > len(orders) {
+				end = len(orders)
+			}
+			orders = orders[start:end]
+		}
+	}
+
+	return orders, total, nil
 }
