@@ -18,6 +18,7 @@ var rootCmd = &cobra.Command{
 func Setup(orderService *services.OrderService) {
 	SetupAcceptCmd(orderService)
 	SetupReturnCmd(orderService)
+	SetupProcessCmd(orderService)
 }
 
 func Execute() {
@@ -44,10 +45,12 @@ func Execute() {
 		os.Args = []string{os.Args[0]}
 		os.Args = append(os.Args, args...)
 
-		rootCmd.Execute()
+		if err := rootCmd.Execute(); err != nil {
+			log.Printf("cannot execute root command: %s", err)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Printf("cannot read standard input: %v", err)
+		log.Printf("cannot read standard input: %s", err)
 	}
 }

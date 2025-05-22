@@ -16,19 +16,17 @@ func SetupReturnCmd(orderService *services.OrderService) {
 
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
 
-	returnCmd.RunE = func(cmd *cobra.Command, args []string) (err error) {
+	returnCmd.Run = func(cmd *cobra.Command, args []string) {
 		orderID, err := GetFlag(cmd, FlagOrderID)
 		if err != nil {
-			return err
+			fmt.Printf("ERROR: %s\n", err)
 		}
 
 		if err = orderService.ReturnOrder(orderID); err != nil {
-			return err
+			fmt.Printf("ERROR: %s\n", err)
 		}
 
 		fmt.Printf("ORDER_RETURNED: %s\n", orderID)
-
-		return nil
 	}
 }
 

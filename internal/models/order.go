@@ -10,7 +10,7 @@ const (
 
 type Order struct {
 	ID            string     `json:"id"`
-	UserID        string     `json:"receipt_id"`
+	UserID        string     `json:"user_id"`
 	StorageExpire time.Time  `json:"storage_deadline"`
 	Status        string     `json:"status"` // "accepted", "issued", "returned"
 	CreatedAt     time.Time  `json:"created_at"`

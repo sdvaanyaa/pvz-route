@@ -18,8 +18,7 @@ const (
 )
 
 type Storage struct {
-	ordersPath  string
-	returnsPath string
+	ordersPath string
 }
 
 func New(storagePath string) (*Storage, error) {
@@ -30,17 +29,14 @@ func New(storagePath string) (*Storage, error) {
 	}
 
 	ordersPath := filepath.Join(storagePath, "orders.json")
-	returnsPath := filepath.Join(storagePath, "returns.json")
 
-	for _, path := range []string{ordersPath, returnsPath} {
-		if _, err := os.Stat(path); errors.Is(err, fs.ErrNotExist) {
-			if err = os.WriteFile(path, []byte("[]"), filePerm); err != nil {
-				return nil, fmt.Errorf("%s: %w", op, err)
-			}
+	if _, err := os.Stat(ordersPath); errors.Is(err, fs.ErrNotExist) {
+		if err = os.WriteFile(ordersPath, []byte("[]"), filePerm); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 	}
 
-	return &Storage{ordersPath, returnsPath}, nil
+	return &Storage{ordersPath}, nil
 }
 
 func (s *Storage) SaveOrder(order *models.Order) error {
@@ -103,6 +99,48 @@ func (s *Storage) DeleteOrder(orderID string) error {
 	}
 
 	return fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
+}
+
+func (s *Storage) UpdateOrder(order *models.Order) error {
+	const op = "storage.json_storage.UpdateOrder"
+
+	orders, err := s.GetOrders()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	var updated bool
+	for i, o := range orders {
+		if order.ID == o.ID {
+			orders[i] = order
+			updated = true
+			break
+		}
+	}
+
+	if !updated {
+		return fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
+	}
+
+	return s.SaveOrders(orders)
+}
+
+func (s *Storage) GetOrdersByUser(userID string) ([]*models.Order, error) {
+	const op = "storage.json_storage.GetOrdersByUser"
+
+	var orders []*models.Order
+	if err := readJSON(s.ordersPath, &orders); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var userOrders []*models.Order
+	for _, o := range orders {
+		if o.UserID == userID {
+			userOrders = append(userOrders, o)
+		}
+	}
+
+	return userOrders, nil
 }
 
 func (s *Storage) SaveOrders(orders []*models.Order) error {
