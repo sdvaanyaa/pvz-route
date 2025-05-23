@@ -14,7 +14,6 @@ var (
 type Storage interface {
 	SaveOrder(order *models.Order) error
 	GetOrder(orderID string) (*models.Order, error)
-	DeleteOrder(orderID string) error
 	UpdateOrder(order *models.Order) error
 
 	GetOrdersByUser(userID string) ([]*models.Order, error)

@@ -43,7 +43,7 @@ func SetupProcessCmd(orderService *order.Service) {
 		sliceOrderIDs := strings.Split(orderIDs, ",")
 
 		for _, orderID := range sliceOrderIDs {
-			if err = orderService.ProcessOrder(userID, orderID, action); err != nil {
+			if err = orderService.Process(userID, orderID, action); err != nil {
 				fmt.Printf("ERROR %s: %s\n", orderID, err)
 				continue
 			}

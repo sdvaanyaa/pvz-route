@@ -23,7 +23,7 @@ func SetupReturnCmd(orderService *order.Service) {
 			return
 		}
 
-		if err = orderService.ReturnOrder(orderID); err != nil {
+		if err = orderService.Return(orderID); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}

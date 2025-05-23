@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func (s *Service) ReturnOrder(orderID string) error {
-	const op = "services.order.ReturnOrder"
+func (s *Service) Return(orderID string) error {
+	const op = "services.order.Return"
 
 	if orderID == "" {
 		return fmt.Errorf("%s: %w", op, ErrEmptyOrderID)
@@ -26,5 +26,17 @@ func (s *Service) ReturnOrder(orderID string) error {
 		return fmt.Errorf("%s: %w", op, ErrOrderIssued)
 	}
 
-	return s.storage.DeleteOrder(orderID)
+	now := time.Now()
+	order.Status = models.StatusArchived
+	order.ArchivedAt = &now
+	order.History = append(order.History, models.OrderStatusChange{
+		Status:    models.StatusArchived,
+		Timestamp: now,
+	})
+
+	if err = s.storage.UpdateOrder(order); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }

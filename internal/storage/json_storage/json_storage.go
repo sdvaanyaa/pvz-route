@@ -83,24 +83,6 @@ func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
 	return nil, fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
 }
 
-func (s *Storage) DeleteOrder(orderID string) error {
-	const op = "storage.json_storage.DeleteOrder"
-
-	orders, err := s.GetOrders()
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	for i, o := range orders {
-		if o.ID == orderID {
-			orders = append(orders[:i], orders[i+1:]...)
-			return s.SaveOrders(orders)
-		}
-	}
-
-	return fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
-}
-
 func (s *Storage) UpdateOrder(order *models.Order) error {
 	const op = "storage.json_storage.UpdateOrder"
 

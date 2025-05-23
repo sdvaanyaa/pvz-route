@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func (s *Service) ProcessOrder(userID, orderID, action string) error {
-	const op = "services.order.ProcessOrder"
+func (s *Service) Process(userID, orderID, action string) error {
+	const op = "services.order.Process"
 
 	if userID == "" {
 		return fmt.Errorf("%s: %w", op, ErrEmptyUserID)
@@ -39,10 +39,11 @@ func (s *Service) ProcessOrder(userID, orderID, action string) error {
 		order.Status = models.StatusIssued
 		now := time.Now()
 		order.IssuedAt = &now
+		order.History = append(order.History, models.OrderStatusChange{
+			Status:    models.StatusIssued,
+			Timestamp: now,
+		})
 
-		if err = s.storage.UpdateOrder(order); err != nil {
-			return fmt.Errorf("%s: %w", op, err)
-		}
 	case "return":
 		if order.Status != models.StatusIssued || order.IssuedAt == nil {
 			return fmt.Errorf("%s: %w", op, ErrOrderNotIssued)
@@ -56,12 +57,16 @@ func (s *Service) ProcessOrder(userID, orderID, action string) error {
 		order.IssuedAt = nil
 		now := time.Now()
 		order.ReturnedAt = &now
-
-		if err = s.storage.UpdateOrder(order); err != nil {
-			return fmt.Errorf("%s: %w", op, err)
-		}
+		order.History = append(order.History, models.OrderStatusChange{
+			Status:    models.StatusReturned,
+			Timestamp: now,
+		})
 	default:
 		return fmt.Errorf("%s: %w", op, ErrUnknownAction)
+	}
+
+	if err = s.storage.UpdateOrder(order); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil

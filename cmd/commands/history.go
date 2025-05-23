@@ -1,10 +1,29 @@
 package commands
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+	"github.com/spf13/cobra"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
+)
 
 var historyCmd = &cobra.Command{
 	Use:   "order-history",
 	Short: "Get order change history",
+}
+
+func SetupHistoryCmd(orderService *order.Service) {
+	historyCmd.Run = func(cmd *cobra.Command, args []string) {
+		historyEntry, err := orderService.History()
+		if err != nil {
+			fmt.Printf("ERROR: %s\n", err)
+			return
+		}
+
+		for _, entry := range historyEntry {
+			formatedTime := entry.Timestamp.Format("02 Jan 15:04")
+			fmt.Printf("HISTORY: %s %s %s\n", entry.OrderID, entry.Status, formatedTime)
+		}
+	}
 }
 
 func init() {

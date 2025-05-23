@@ -18,16 +18,25 @@ func (s *Service) ListOrders(userID string, inPVZ bool, last, page, limit int) (
 		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}
 
+	activeOrders := make([]*models.Order, 0, len(orders))
+	for _, order := range orders {
+		if order.Status != models.StatusArchived {
+			activeOrders = append(activeOrders, order)
+		}
+	}
+
+	orders = activeOrders
+
 	if inPVZ {
-		filtered := make([]*models.Order, 0, len(orders))
+		inPVZOrders := make([]*models.Order, 0, len(orders))
 
 		for _, order := range orders {
 			if order.Status == models.StatusAccepted {
-				filtered = append(filtered, order)
+				inPVZOrders = append(inPVZOrders, order)
 			}
 		}
 
-		orders = filtered
+		orders = inPVZOrders
 	}
 
 	sort.Slice(orders, func(i, j int) bool {

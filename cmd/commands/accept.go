@@ -39,7 +39,7 @@ func SetupAcceptCmd(orderService *order.Service) {
 			return
 		}
 
-		if err = orderService.AcceptOrder(orderID, userID, expire); err != nil {
+		if err = orderService.Accept(orderID, userID, expire); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
