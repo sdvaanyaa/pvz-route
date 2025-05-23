@@ -152,7 +152,7 @@ func readJSON(path string, v interface{}) error {
 		return fmt.Errorf("%s: %w", path, err)
 	}
 
-	if err := json.Unmarshal(data, v); err != nil {
+	if err = json.Unmarshal(data, v); err != nil {
 		return fmt.Errorf("%s: %w", path, err)
 	}
 
@@ -165,7 +165,7 @@ func writeJSON(path string, v interface{}) error {
 		return fmt.Errorf("%s: %w", path, err)
 	}
 
-	if err := os.WriteFile(path, data, filePerm); err != nil {
+	if err = os.WriteFile(path, data, filePerm); err != nil {
 		return fmt.Errorf("%s: %w", path, err)
 	}
 

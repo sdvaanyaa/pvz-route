@@ -19,6 +19,9 @@ var (
 	ErrOrderNotBelongsToUser = errors.New("order does not belong to user")
 	ErrOrderNotAccepted      = errors.New("order has not been accepted")
 	ErrReturnPeriodExpired   = errors.New("return period exceeded: more than 48 hours since issue")
+	ErrEmptyFilePath         = errors.New("file path must not be empty")
+	ErrEmptyImportFile       = errors.New("import file is empty")
+	ErrNoValidOrders         = errors.New("import file does not contain valid orders")
 )
 
 type Service struct {

@@ -22,6 +22,7 @@ func Setup(orderService *order.Service) {
 	SetupListOrdersCmd(orderService)
 	SetupListReturnsCmd(orderService)
 	SetupHistoryCmd(orderService)
+	SetupImportCmd(orderService)
 }
 
 func Execute() {

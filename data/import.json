@@ -1,0 +1,12 @@
+[
+  {
+    "id": "5",
+    "user_id": "1",
+    "storage_deadline": "2025-05-25T00:00:00Z"
+  },
+  {
+    "id": "6",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z"
+  }
+]
