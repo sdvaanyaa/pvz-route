@@ -2,7 +2,7 @@ package main
 
 import (
 	"gitlab.ozon.dev/sd_vaanyaa/homework/cmd/commands"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage/json_storage"
 	"log"
 )
@@ -15,7 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	orderService := services.New(storage)
+	orderService := order.New(storage)
 	commands.Setup(orderService)
 	commands.Execute()
 }

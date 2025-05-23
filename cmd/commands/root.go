@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"log"
 	"os"
 	"strings"
@@ -15,11 +15,12 @@ var rootCmd = &cobra.Command{
 	Short: "PVZ CLI for managing orders",
 }
 
-func Setup(orderService *services.OrderService) {
+func Setup(orderService *order.Service) {
 	SetupAcceptCmd(orderService)
 	SetupReturnCmd(orderService)
 	SetupProcessCmd(orderService)
 	SetupListOrdersCmd(orderService)
+	SetupListReturnsCmd(orderService)
 }
 
 func Execute() {

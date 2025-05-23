@@ -15,4 +15,5 @@ type Order struct {
 	Status        string     `json:"status"` // "accepted", "issued", "returned"
 	CreatedAt     time.Time  `json:"created_at"`
 	IssuedAt      *time.Time `json:"issued_at"`
+	ReturnedAt    *time.Time `json:"returned_at"`
 }

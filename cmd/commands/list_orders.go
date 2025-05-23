@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 )
 
 var listOrdersCmd = &cobra.Command{
@@ -11,12 +11,12 @@ var listOrdersCmd = &cobra.Command{
 	Short: "Get a list of orders",
 }
 
-func SetupListOrdersCmd(orderService *services.OrderService) {
+func SetupListOrdersCmd(orderService *order.Service) {
 	listOrdersCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	listOrdersCmd.Flags().BoolP(FlagInPVZ, "p", false, "Show only orders in PV")
 	listOrdersCmd.Flags().IntP(FlagLast, "l", 0, "Show last N orders")
 	listOrdersCmd.Flags().IntP(FlagPage, "n", 1, "Page number")
-	listOrdersCmd.Flags().IntP(FlagLimit, "c", 0, "Orders per page")
+	listOrdersCmd.Flags().IntP(FlagLimit, "m", 0, "Orders per page")
 
 	_ = listOrdersCmd.MarkFlagRequired(FlagUserID)
 
@@ -24,31 +24,37 @@ func SetupListOrdersCmd(orderService *services.OrderService) {
 		userID, err := GetFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		inPVZ, err := GetFlagBool(cmd, FlagInPVZ)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		last, err := GetFlagInt(cmd, FlagLast)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		page, err := GetFlagInt(cmd, FlagPage)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		limit, err := GetFlagInt(cmd, FlagLimit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		orders, total, err := orderService.ListOrders(userID, inPVZ, last, page, limit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		for _, o := range orders {

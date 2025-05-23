@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ var processCmd = &cobra.Command{
 	Short: "Issue orders or accept customer returns",
 }
 
-func SetupProcessCmd(orderService *services.OrderService) {
+func SetupProcessCmd(orderService *order.Service) {
 	processCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	processCmd.Flags().StringP(FlagAction, "a", "", "Expires")
 	processCmd.Flags().StringP(FlagOrderIDs, "o", "", "Order ID")
@@ -25,16 +25,19 @@ func SetupProcessCmd(orderService *services.OrderService) {
 		userID, err := GetFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		action, err := GetFlagString(cmd, FlagAction)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		orderIDs, err := GetFlagString(cmd, FlagOrderIDs)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		sliceOrderIDs := strings.Split(orderIDs, ",")
@@ -46,7 +49,6 @@ func SetupProcessCmd(orderService *services.OrderService) {
 			}
 
 			fmt.Printf("PROCESSED: %s\n", orderID)
-
 		}
 	}
 }

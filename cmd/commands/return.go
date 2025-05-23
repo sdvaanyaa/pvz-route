@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 )
 
 var returnCmd = &cobra.Command{
@@ -11,7 +11,7 @@ var returnCmd = &cobra.Command{
 	Short: "Return the order to the courier",
 }
 
-func SetupReturnCmd(orderService *services.OrderService) {
+func SetupReturnCmd(orderService *order.Service) {
 	returnCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
@@ -20,10 +20,12 @@ func SetupReturnCmd(orderService *services.OrderService) {
 		orderID, err := GetFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		if err = orderService.ReturnOrder(orderID); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		fmt.Printf("ORDER_RETURNED: %s\n", orderID)

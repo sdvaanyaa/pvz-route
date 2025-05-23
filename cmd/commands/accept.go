@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 )
 
 var acceptCmd = &cobra.Command{
@@ -11,7 +11,7 @@ var acceptCmd = &cobra.Command{
 	Short: "Accept the order from the courier",
 }
 
-func SetupAcceptCmd(orderService *services.OrderService) {
+func SetupAcceptCmd(orderService *order.Service) {
 	acceptCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 	acceptCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	acceptCmd.Flags().StringP(FlagExpires, "e", "", "Expires")
@@ -24,20 +24,24 @@ func SetupAcceptCmd(orderService *services.OrderService) {
 		orderID, err := GetFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		userID, err := GetFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		expire, err := GetFlagString(cmd, FlagExpires)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		if err = orderService.AcceptOrder(orderID, userID, expire); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
+			return
 		}
 
 		fmt.Printf("ORDER_ACCEPTED: %s\n", orderID)
