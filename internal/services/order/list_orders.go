@@ -10,6 +10,10 @@ func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit i
 		return nil, 0, ErrEmptyUserID
 	}
 
+	if page < 1 {
+		return nil, 0, ErrInvalidPageNumber
+	}
+
 	orders, err := s.storage.GetOrdersByUser(userID)
 	if err != nil {
 		return nil, 0, err
