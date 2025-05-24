@@ -1,25 +1,22 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"sort"
 )
 
 func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
-	const op = "services.order.ListReturns"
-
 	if page < 1 {
-		return nil, fmt.Errorf("%s: %w", op, ErrInvalidPageNumber)
+		return nil, ErrInvalidPageNumber
 	}
 
 	if limit < 1 {
-		return nil, fmt.Errorf("%s: %w", op, ErrInvalidLastNumber)
+		return nil, ErrInvalidLastNumber
 	}
 
 	orders, err := s.storage.GetOrders()
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	returns := make([]*models.Order, 0, len(orders))

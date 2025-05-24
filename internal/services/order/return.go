@@ -1,29 +1,26 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"time"
 )
 
 func (s *orderService) Return(orderID string) error {
-	const op = "services.order.Return"
-
 	if orderID == "" {
-		return fmt.Errorf("%s: %w", op, ErrEmptyOrderID)
+		return ErrEmptyOrderID
 	}
 
 	order, err := s.storage.GetOrder(orderID)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	if order.StorageExpire.After(time.Now()) {
-		return fmt.Errorf("%s: %w", op, ErrStorageNotExpired)
+		return ErrStorageNotExpired
 	}
 
 	if order.Status == models.StatusIssued && order.IssuedAt != nil {
-		return fmt.Errorf("%s: %w", op, ErrOrderIssued)
+		return ErrOrderIssued
 	}
 
 	now := time.Now()
@@ -35,7 +32,7 @@ func (s *orderService) Return(orderID string) error {
 	})
 
 	if err = s.storage.UpdateOrder(order); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	return nil

@@ -1,4 +1,4 @@
-# 📜 CLI Contract
+~~# 📜 CLI Contract
 
 ```
 Command: help
@@ -108,4 +108,4 @@ ORDER: ORD004 ...
 NEXT: ORD004
 
 > exit
-```
+```~~

@@ -1,21 +1,18 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"sort"
 )
 
 func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error) {
-	const op = "services.order.ListOrders"
-
 	if userID == "" {
-		return nil, 0, fmt.Errorf("%s: %w", op, ErrEmptyUserID)
+		return nil, 0, ErrEmptyUserID
 	}
 
 	orders, err := s.storage.GetOrdersByUser(userID)
 	if err != nil {
-		return nil, 0, fmt.Errorf("%s: %w", op, err)
+		return nil, 0, err
 	}
 
 	activeOrders := make([]*models.Order, 0, len(orders))

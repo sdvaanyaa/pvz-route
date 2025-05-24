@@ -1,14 +1,7 @@
 package storage
 
 import (
-	"errors"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
-)
-
-var (
-	ErrOrderAlreadyExists = errors.New("order already exists")
-	ErrOrderExpired       = errors.New("order expired")
-	ErrOrderNotFound      = errors.New("order not found")
 )
 
 type Storage interface {

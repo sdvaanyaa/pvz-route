@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ var listOrdersCmd = &cobra.Command{
 	Short: "Get a list of orders",
 }
 
-func SetupListOrdersCmd(orderSvc order.Service) {
+func setupListOrdersCmd(orderSvc order.Service) {
 	listOrdersCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	listOrdersCmd.Flags().BoolP(FlagInPVZ, "p", false, "Show only orders in PV")
 	listOrdersCmd.Flags().IntP(FlagLast, "l", 0, "Show last N orders")
@@ -21,31 +21,31 @@ func SetupListOrdersCmd(orderSvc order.Service) {
 	_ = listOrdersCmd.MarkFlagRequired(FlagUserID)
 
 	listOrdersCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := GetFlagString(cmd, FlagUserID)
+		userID, err := getFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		inPVZ, err := GetFlagBool(cmd, FlagInPVZ)
+		inPVZ, err := getFlagBool(cmd, FlagInPVZ)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		last, err := GetFlagInt(cmd, FlagLast)
+		last, err := getFlagInt(cmd, FlagLast)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		page, err := GetFlagInt(cmd, FlagPage)
+		page, err := getFlagInt(cmd, FlagPage)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		limit, err := GetFlagInt(cmd, FlagLimit)
+		limit, err := getFlagInt(cmd, FlagLimit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
@@ -58,7 +58,8 @@ func SetupListOrdersCmd(orderSvc order.Service) {
 		}
 
 		for _, o := range orders {
-			fmt.Printf("ORDER: %s %s %s %s\n", o.ID, o.UserID, o.Status, o.StorageExpire)
+			formatedTime := o.StorageExpire.Format("02 Jan 15:04")
+			fmt.Printf("ORDER: %s %s %s %s\n", o.ID, o.UserID, o.Status, formatedTime)
 		}
 
 		fmt.Printf("TOTAL: %d\n", total)

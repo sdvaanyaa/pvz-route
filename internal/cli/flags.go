@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ const (
 	FlagFile     = "file"
 )
 
-func GetFlagString(cmd *cobra.Command, name string) (string, error) {
+func getFlagString(cmd *cobra.Command, name string) (string, error) {
 	val, err := cmd.Flags().GetString(name)
 	if err != nil {
 		return "", fmt.Errorf("cannot read flag --%s: %w", name, err)
@@ -26,7 +26,7 @@ func GetFlagString(cmd *cobra.Command, name string) (string, error) {
 	return val, nil
 }
 
-func GetFlagBool(cmd *cobra.Command, name string) (bool, error) {
+func getFlagBool(cmd *cobra.Command, name string) (bool, error) {
 	val, err := cmd.Flags().GetBool(name)
 	if err != nil {
 		return false, fmt.Errorf("cannot read flag --%s: %w", name, err)
@@ -34,7 +34,7 @@ func GetFlagBool(cmd *cobra.Command, name string) (bool, error) {
 	return val, nil
 }
 
-func GetFlagInt(cmd *cobra.Command, name string) (int, error) {
+func getFlagInt(cmd *cobra.Command, name string) (int, error) {
 	val, err := cmd.Flags().GetInt(name)
 	if err != nil {
 		return 0, fmt.Errorf("cannot read flag --%s: %w", name, err)

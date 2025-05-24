@@ -1,7 +1,6 @@
 package order
 
 import (
-	"fmt"
 	"sort"
 	"time"
 )
@@ -13,11 +12,9 @@ type HistoryEntry struct {
 }
 
 func (s *orderService) History() ([]*HistoryEntry, error) {
-	const op = "services.order.History"
-
 	orders, err := s.storage.GetOrders()
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	var history []*HistoryEntry

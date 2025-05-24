@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,13 +11,13 @@ var importCmd = &cobra.Command{
 	Short: "Import orders from JSON file",
 }
 
-func SetupImportCmd(orderSvc order.Service) {
+func setupImportCmd(orderSvc order.Service) {
 	importCmd.Flags().StringP(FlagFile, "f", "", "File Path")
 
 	_ = importCmd.MarkFlagRequired(FlagFile)
 
 	importCmd.Run = func(cmd *cobra.Command, args []string) {
-		path, err := GetFlagString(cmd, FlagFile)
+		path, err := getFlagString(cmd, FlagFile)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

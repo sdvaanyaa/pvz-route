@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ var acceptCmd = &cobra.Command{
 	Short: "Accept the order from the courier",
 }
 
-func SetupAcceptCmd(orderSvc order.Service) {
+func setupAcceptCmd(orderSvc order.Service) {
 	acceptCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 	acceptCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	acceptCmd.Flags().StringP(FlagExpires, "e", "", "Expires")
@@ -21,19 +21,19 @@ func SetupAcceptCmd(orderSvc order.Service) {
 	_ = acceptCmd.MarkFlagRequired(FlagExpires)
 
 	acceptCmd.Run = func(cmd *cobra.Command, args []string) {
-		orderID, err := GetFlagString(cmd, FlagOrderID)
+		orderID, err := getFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		userID, err := GetFlagString(cmd, FlagUserID)
+		userID, err := getFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		expire, err := GetFlagString(cmd, FlagExpires)
+		expire, err := getFlagString(cmd, FlagExpires)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

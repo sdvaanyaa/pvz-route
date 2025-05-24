@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ var historyCmd = &cobra.Command{
 	Short: "Get order change history",
 }
 
-func SetupHistoryCmd(orderSvc order.Service) {
+func setupHistoryCmd(orderSvc order.Service) {
 	historyCmd.Run = func(cmd *cobra.Command, args []string) {
 		historyEntry, err := orderSvc.History()
 		if err != nil {

@@ -1,25 +1,22 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"time"
 )
 
 func (s *orderService) Accept(orderID, userID, expire string) error {
-	const op = "services.order.Accept"
-
 	if orderID == "" {
-		return fmt.Errorf("%s: %w", op, ErrEmptyOrderID)
+		return ErrEmptyOrderID
 	}
 
 	if userID == "" {
-		return fmt.Errorf("%s: %w", op, ErrEmptyUserID)
+		return ErrEmptyUserID
 	}
 
 	storageExpire, err := time.Parse(time.DateOnly, expire)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, ErrInvalidDeadlineFormat)
+		return ErrInvalidDeadlineFormat
 	}
 
 	now := time.Now()

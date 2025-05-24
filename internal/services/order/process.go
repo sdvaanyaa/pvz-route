@@ -1,39 +1,38 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"time"
 )
 
-func (s *orderService) Process(userID, orderID, action string) error {
-	const op = "services.order.Process"
+const returnWindow = 48 * time.Hour
 
+func (s *orderService) Process(userID, orderID, action string) error {
 	if userID == "" {
-		return fmt.Errorf("%s: %w", op, ErrEmptyUserID)
+		return ErrEmptyUserID
 	}
 
 	if orderID == "" {
-		return fmt.Errorf("%s: %w", op, ErrEmptyOrderID)
+		return ErrEmptyOrderID
 	}
 
 	order, err := s.storage.GetOrder(orderID)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	if order.UserID != userID {
-		return fmt.Errorf("%s: %w", op, ErrOrderNotBelongsToUser)
+		return ErrOrderNotBelongsToUser
 	}
 
 	switch action {
 	case "issue":
 		if order.Status != models.StatusAccepted {
-			return fmt.Errorf("%s: %w", op, ErrOrderNotAccepted)
+			return ErrOrderNotAccepted
 		}
 
 		if time.Now().After(order.StorageExpire) {
-			return fmt.Errorf("%s: %w", op, ErrStorageExpired)
+			return ErrStorageExpired
 		}
 
 		order.Status = models.StatusIssued
@@ -46,11 +45,11 @@ func (s *orderService) Process(userID, orderID, action string) error {
 
 	case "return":
 		if order.Status != models.StatusIssued || order.IssuedAt == nil {
-			return fmt.Errorf("%s: %w", op, ErrOrderNotIssued)
+			return ErrOrderNotIssued
 		}
 
-		if time.Since(*order.IssuedAt).Hours() > 48 {
-			return fmt.Errorf("%s: %w", op, ErrReturnPeriodExpired)
+		if time.Since(*order.IssuedAt) > returnWindow {
+			return ErrReturnPeriodExpired
 		}
 
 		order.Status = models.StatusReturned
@@ -62,11 +61,11 @@ func (s *orderService) Process(userID, orderID, action string) error {
 			Timestamp: now,
 		})
 	default:
-		return fmt.Errorf("%s: %w", op, ErrUnknownAction)
+		return ErrUnknownAction
 	}
 
 	if err = s.storage.UpdateOrder(order); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	return nil

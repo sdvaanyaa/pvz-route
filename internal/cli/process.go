@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -12,29 +12,29 @@ var processCmd = &cobra.Command{
 	Short: "Issue orders or accept customer returns",
 }
 
-func SetupProcessCmd(orderSvc order.Service) {
+func setupProcessCmd(orderSvc order.Service) {
 	processCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
-	processCmd.Flags().StringP(FlagAction, "a", "", "Expires")
-	processCmd.Flags().StringP(FlagOrderIDs, "o", "", "Order ID")
+	processCmd.Flags().StringP(FlagAction, "a", "", "Action: issue or return")
+	processCmd.Flags().StringP(FlagOrderIDs, "o", "", "Order IDs")
 
-	_ = processCmd.MarkFlagRequired(FlagOrderID)
 	_ = processCmd.MarkFlagRequired(FlagUserID)
-	_ = processCmd.MarkFlagRequired(FlagExpires)
+	_ = processCmd.MarkFlagRequired(FlagAction)
+	_ = processCmd.MarkFlagRequired(FlagOrderIDs)
 
 	processCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := GetFlagString(cmd, FlagUserID)
+		userID, err := getFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		action, err := GetFlagString(cmd, FlagAction)
+		action, err := getFlagString(cmd, FlagAction)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		orderIDs, err := GetFlagString(cmd, FlagOrderIDs)
+		orderIDs, err := getFlagString(cmd, FlagOrderIDs)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

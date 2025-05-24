@@ -1,25 +1,22 @@
 package order
 
 import (
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"sort"
 )
 
 func (s *orderService) Scroll(userID, lastID string, limit int) ([]*models.Order, string, error) {
-	const op = "services.order.Scroll"
-
 	if userID == "" {
-		return nil, "", fmt.Errorf("%s: %w", op, ErrEmptyUserID)
+		return nil, "", ErrEmptyUserID
 	}
 
 	if limit < 1 {
-		return nil, "", fmt.Errorf("%s: %w", op, ErrInvalidLimitNumber)
+		return nil, "", ErrInvalidLimitNumber
 	}
 
 	orders, err := s.storage.GetOrdersByUser(userID)
 	if err != nil {
-		return nil, "", fmt.Errorf("%s: %w", op, err)
+		return nil, "", err
 	}
 
 	activeOrders := make([]*models.Order, 0, len(orders))

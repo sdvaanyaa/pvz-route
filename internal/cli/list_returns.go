@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ var listReturnsCmd = &cobra.Command{
 	Short: "Get a list of returns",
 }
 
-func SetupListReturnsCmd(orderSvc order.Service) {
+func setupListReturnsCmd(orderSvc order.Service) {
 	listReturnsCmd.Flags().IntP(FlagPage, "n", 1, "Page number")
 	listReturnsCmd.Flags().IntP(FlagLimit, "m", 0, "Orders per page")
 
@@ -19,13 +19,13 @@ func SetupListReturnsCmd(orderSvc order.Service) {
 	_ = listReturnsCmd.MarkFlagRequired(FlagLimit)
 
 	listReturnsCmd.Run = func(cmd *cobra.Command, args []string) {
-		page, err := GetFlagInt(cmd, FlagPage)
+		page, err := getFlagInt(cmd, FlagPage)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		limit, err := GetFlagInt(cmd, FlagLimit)
+		limit, err := getFlagInt(cmd, FlagLimit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

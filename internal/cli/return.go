@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"fmt"
@@ -11,13 +11,13 @@ var returnCmd = &cobra.Command{
 	Short: "Return the order to the courier",
 }
 
-func SetupReturnCmd(orderSvc order.Service) {
+func setupReturnCmd(orderSvc order.Service) {
 	returnCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
 
 	returnCmd.Run = func(cmd *cobra.Command, args []string) {
-		orderID, err := GetFlagString(cmd, FlagOrderID)
+		orderID, err := getFlagString(cmd, FlagOrderID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

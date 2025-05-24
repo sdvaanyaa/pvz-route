@@ -3,9 +3,7 @@ package json_storage
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -21,18 +19,23 @@ type Storage struct {
 	ordersPath string
 }
 
-func New(storagePath string) (*Storage, error) {
-	const op = "storage.json_storage.New"
+var (
+	ErrOrderAlreadyExists = errors.New("order already exists")
+	ErrOrderExpired       = errors.New("order expired")
+	ErrOrderNotFound      = errors.New("order not found")
+	ErrStorageIO          = errors.New("failed to access storage")
+)
 
+func New(storagePath string) (*Storage, error) {
 	if err := os.MkdirAll(storagePath, dirPerm); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	ordersPath := filepath.Join(storagePath, "orders.json")
 
 	if _, err := os.Stat(ordersPath); errors.Is(err, fs.ErrNotExist) {
 		if err = os.WriteFile(ordersPath, []byte("[]"), filePerm); err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
+			return nil, err
 		}
 	}
 
@@ -40,38 +43,34 @@ func New(storagePath string) (*Storage, error) {
 }
 
 func (s *Storage) SaveOrder(order *models.Order) error {
-	const op = "storage.json_storage.SaveOrder"
-
 	if time.Now().After(order.StorageExpire) {
-		return fmt.Errorf("%s: %w", op, storage.ErrOrderExpired)
+		return ErrOrderExpired
 	}
 
 	if _, err := s.GetOrder(order.ID); err == nil {
-		return fmt.Errorf("%s: %w", op, storage.ErrOrderAlreadyExists)
-	} else if !errors.Is(err, storage.ErrOrderNotFound) {
-		return fmt.Errorf("%s: %w", op, err)
+		return ErrOrderAlreadyExists
+	} else if !errors.Is(err, ErrOrderNotFound) {
+		return err
 	}
 
 	orders, err := s.GetOrders()
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	orders = append(orders, order)
 
 	if err = s.SaveOrders(orders); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	return nil
 }
 
 func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
-	const op = "storage.json_storage.GetOrder"
-
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	for _, o := range orders {
@@ -80,15 +79,13 @@ func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
+	return nil, ErrOrderNotFound
 }
 
 func (s *Storage) UpdateOrder(order *models.Order) error {
-	const op = "storage.json_storage.UpdateOrder"
-
 	orders, err := s.GetOrders()
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	var updated bool
@@ -101,18 +98,16 @@ func (s *Storage) UpdateOrder(order *models.Order) error {
 	}
 
 	if !updated {
-		return fmt.Errorf("%s: %w", op, storage.ErrOrderNotFound)
+		return ErrOrderNotFound
 	}
 
 	return s.SaveOrders(orders)
 }
 
 func (s *Storage) GetOrdersByUser(userID string) ([]*models.Order, error) {
-	const op = "storage.json_storage.GetOrdersByUser"
-
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	var userOrders []*models.Order
@@ -126,21 +121,17 @@ func (s *Storage) GetOrdersByUser(userID string) ([]*models.Order, error) {
 }
 
 func (s *Storage) SaveOrders(orders []*models.Order) error {
-	const op = "storage.json_storage.SaveOrders"
-
 	if err := writeJSON(s.ordersPath, orders); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return err
 	}
 
 	return nil
 }
 
 func (s *Storage) GetOrders() ([]*models.Order, error) {
-	const op = "storage.json_storage.GetOrders"
-
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, err
 	}
 
 	return orders, nil
@@ -149,11 +140,11 @@ func (s *Storage) GetOrders() ([]*models.Order, error) {
 func readJSON(path string, v interface{}) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return fmt.Errorf("%s: %w", path, err)
+		return ErrStorageIO
 	}
 
 	if err = json.Unmarshal(data, v); err != nil {
-		return fmt.Errorf("%s: %w", path, err)
+		return ErrStorageIO
 	}
 
 	return nil
@@ -162,11 +153,11 @@ func readJSON(path string, v interface{}) error {
 func writeJSON(path string, v interface{}) error {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
-		return fmt.Errorf("%s: %w", path, err)
+		return ErrStorageIO
 	}
 
 	if err = os.WriteFile(path, data, filePerm); err != nil {
-		return fmt.Errorf("%s: %w", path, err)
+		return ErrStorageIO
 	}
 
 	return nil

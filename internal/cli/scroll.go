@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"bufio"
@@ -14,7 +14,7 @@ var scrollCmd = &cobra.Command{
 	Short: "Fetch user orders with infinite scrolling support",
 }
 
-func SetupScrollCmd(orderSvc order.Service) {
+func setupScrollCmd(orderSvc order.Service) {
 	scrollCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	scrollCmd.Flags().StringP(FlagLast, "l", "0", "Last ID")
 	scrollCmd.Flags().IntP(FlagLimit, "n", 20, "Number of orders to fetch (default 20)")
@@ -22,19 +22,19 @@ func SetupScrollCmd(orderSvc order.Service) {
 	_ = scrollCmd.MarkFlagRequired(FlagUserID)
 
 	scrollCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := GetFlagString(cmd, FlagUserID)
+		userID, err := getFlagString(cmd, FlagUserID)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		lastID, err := GetFlagString(cmd, FlagLast)
+		lastID, err := getFlagString(cmd, FlagLast)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
-		limit, err := GetFlagInt(cmd, FlagLimit)
+		limit, err := getFlagInt(cmd, FlagLimit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

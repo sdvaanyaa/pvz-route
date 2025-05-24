@@ -1,4 +1,4 @@
-package commands
+package cli
 
 import (
 	"bufio"
@@ -15,18 +15,18 @@ var rootCmd = &cobra.Command{
 }
 
 func Setup(orderSvc order.Service) {
-	SetupAcceptCmd(orderSvc)
-	SetupReturnCmd(orderSvc)
-	SetupProcessCmd(orderSvc)
-	SetupListOrdersCmd(orderSvc)
-	SetupListReturnsCmd(orderSvc)
-	SetupHistoryCmd(orderSvc)
-	SetupImportCmd(orderSvc)
-	SetupScrollCmd(orderSvc)
+	setupAcceptCmd(orderSvc)
+	setupReturnCmd(orderSvc)
+	setupProcessCmd(orderSvc)
+	setupListOrdersCmd(orderSvc)
+	setupListReturnsCmd(orderSvc)
+	setupHistoryCmd(orderSvc)
+	setupImportCmd(orderSvc)
+	setupScrollCmd(orderSvc)
 }
 
 func Execute() {
-	fmt.Println("PVZ CLI. Type 'help' for commands or 'exit' to quit.")
+	fmt.Println("PVZ CLI. Type 'help' for cli or 'exit' to quit.")
 
 	scanner := bufio.NewScanner(os.Stdin)
 
