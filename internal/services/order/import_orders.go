@@ -43,7 +43,7 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 		existIDs[order.ID] = struct{}{}
 	}
 
-	validOrders := make([]*models.Order, 0, len(orders))
+	newOrders := make([]*models.Order, 0, len(orders))
 	now := time.Now()
 
 	for _, order := range orders {
@@ -69,19 +69,25 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 			},
 		}
 
-		validOrders = append(validOrders, newOrder)
+		newOrders = append(newOrders, newOrder)
 		existIDs[order.ID] = struct{}{}
 	}
 
-	if len(validOrders) == 0 {
+	if len(newOrders) == 0 {
 		return 0, ErrEmptyValidOrders
 	}
 
-	if err = s.storage.SaveOrders(validOrders); err != nil {
+	importCount := len(newOrders)
+
+	allOrders := make([]*models.Order, 0, len(newOrders)+len(existOrders))
+	allOrders = append(allOrders, newOrders...)
+	allOrders = append(allOrders, existOrders...)
+
+	if err = s.storage.SaveOrders(allOrders); err != nil {
 		return 0, err
 	}
 
-	return len(validOrders), nil
+	return importCount, nil
 }
 
 func isOrderValid(order importOrder) bool {
