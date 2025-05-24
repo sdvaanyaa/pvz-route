@@ -11,7 +11,7 @@ var acceptCmd = &cobra.Command{
 	Short: "Accept the order from the courier",
 }
 
-func SetupAcceptCmd(orderService *order.Service) {
+func SetupAcceptCmd(orderSvc order.Service) {
 	acceptCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 	acceptCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	acceptCmd.Flags().StringP(FlagExpires, "e", "", "Expires")
@@ -39,7 +39,7 @@ func SetupAcceptCmd(orderService *order.Service) {
 			return
 		}
 
-		if err = orderService.Accept(orderID, userID, expire); err != nil {
+		if err = orderSvc.Accept(orderID, userID, expire); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}

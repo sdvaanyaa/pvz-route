@@ -11,7 +11,7 @@ var importCmd = &cobra.Command{
 	Short: "Import orders from JSON file",
 }
 
-func SetupImportCmd(orderService *order.Service) {
+func SetupImportCmd(orderSvc order.Service) {
 	importCmd.Flags().StringP(FlagFile, "f", "", "File Path")
 
 	_ = importCmd.MarkFlagRequired(FlagFile)
@@ -23,7 +23,7 @@ func SetupImportCmd(orderService *order.Service) {
 			return
 		}
 
-		count, err := orderService.ImportOrders(path)
+		count, err := orderSvc.ImportOrders(path)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func (s *Service) ListReturns(page, limit int) ([]*models.Order, error) {
+func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
 	const op = "services.order.ListReturns"
 
 	if page < 1 {

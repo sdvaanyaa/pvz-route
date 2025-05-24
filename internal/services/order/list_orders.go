@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func (s *Service) ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error) {
+func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error) {
 	const op = "services.order.ListOrders"
 
 	if userID == "" {

@@ -11,7 +11,7 @@ var returnCmd = &cobra.Command{
 	Short: "Return the order to the courier",
 }
 
-func SetupReturnCmd(orderService *order.Service) {
+func SetupReturnCmd(orderSvc order.Service) {
 	returnCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
 
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
@@ -23,7 +23,7 @@ func SetupReturnCmd(orderService *order.Service) {
 			return
 		}
 
-		if err = orderService.Return(orderID); err != nil {
+		if err = orderSvc.Return(orderID); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}

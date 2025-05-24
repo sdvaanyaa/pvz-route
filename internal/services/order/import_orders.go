@@ -14,7 +14,7 @@ type importOrder struct {
 	StorageExpire *time.Time `json:"storage_deadline"`
 }
 
-func (s *Service) ImportOrders(path string) (int, error) {
+func (s *orderService) ImportOrders(path string) (int, error) {
 	const op = "services.order.ImportOrders"
 
 	if path == "" {
@@ -77,7 +77,7 @@ func (s *Service) ImportOrders(path string) (int, error) {
 	}
 
 	if len(validOrders) == 0 {
-		return 0, fmt.Errorf("%s: %w", op, ErrNoValidOrders)
+		return 0, fmt.Errorf("%s: %w", op, ErrEmptyValidOrders)
 	}
 
 	if err = s.storage.SaveOrders(validOrders); err != nil {

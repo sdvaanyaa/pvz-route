@@ -11,9 +11,9 @@ var historyCmd = &cobra.Command{
 	Short: "Get order change history",
 }
 
-func SetupHistoryCmd(orderService *order.Service) {
+func SetupHistoryCmd(orderSvc order.Service) {
 	historyCmd.Run = func(cmd *cobra.Command, args []string) {
-		historyEntry, err := orderService.History()
+		historyEntry, err := orderSvc.History()
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

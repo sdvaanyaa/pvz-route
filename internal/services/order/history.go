@@ -12,7 +12,7 @@ type HistoryEntry struct {
 	Timestamp time.Time
 }
 
-func (s *Service) History() ([]*HistoryEntry, error) {
+func (s *orderService) History() ([]*HistoryEntry, error) {
 	const op = "services.order.History"
 
 	orders, err := s.storage.GetOrders()

@@ -11,7 +11,7 @@ var listOrdersCmd = &cobra.Command{
 	Short: "Get a list of orders",
 }
 
-func SetupListOrdersCmd(orderService *order.Service) {
+func SetupListOrdersCmd(orderSvc order.Service) {
 	listOrdersCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	listOrdersCmd.Flags().BoolP(FlagInPVZ, "p", false, "Show only orders in PV")
 	listOrdersCmd.Flags().IntP(FlagLast, "l", 0, "Show last N orders")
@@ -51,7 +51,7 @@ func SetupListOrdersCmd(orderService *order.Service) {
 			return
 		}
 
-		orders, total, err := orderService.ListOrders(userID, inPVZ, last, page, limit)
+		orders, total, err := orderSvc.ListOrders(userID, inPVZ, last, page, limit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

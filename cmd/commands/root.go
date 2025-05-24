@@ -11,18 +11,18 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "pvz",
 	Short: "PVZ CLI for managing orders",
 }
 
-func Setup(orderService *order.Service) {
-	SetupAcceptCmd(orderService)
-	SetupReturnCmd(orderService)
-	SetupProcessCmd(orderService)
-	SetupListOrdersCmd(orderService)
-	SetupListReturnsCmd(orderService)
-	SetupHistoryCmd(orderService)
-	SetupImportCmd(orderService)
+func Setup(orderSvc order.Service) {
+	SetupAcceptCmd(orderSvc)
+	SetupReturnCmd(orderSvc)
+	SetupProcessCmd(orderSvc)
+	SetupListOrdersCmd(orderSvc)
+	SetupListReturnsCmd(orderSvc)
+	SetupHistoryCmd(orderSvc)
+	SetupImportCmd(orderSvc)
+	SetupScrollCmd(orderSvc)
 }
 
 func Execute() {

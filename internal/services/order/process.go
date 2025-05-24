@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (s *Service) Process(userID, orderID, action string) error {
+func (s *orderService) Process(userID, orderID, action string) error {
 	const op = "services.order.Process"
 
 	if userID == "" {

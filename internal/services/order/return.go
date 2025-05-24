@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (s *Service) Return(orderID string) error {
+func (s *orderService) Return(orderID string) error {
 	const op = "services.order.Return"
 
 	if orderID == "" {

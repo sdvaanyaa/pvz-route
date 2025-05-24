@@ -2,6 +2,7 @@ package order
 
 import (
 	"errors"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage"
 )
 
@@ -21,13 +22,25 @@ var (
 	ErrReturnPeriodExpired   = errors.New("return period exceeded: more than 48 hours since issue")
 	ErrEmptyFilePath         = errors.New("file path must not be empty")
 	ErrEmptyImportFile       = errors.New("import file is empty")
-	ErrNoValidOrders         = errors.New("import file does not contain valid orders")
+	ErrEmptyValidOrders      = errors.New("import file does not contain valid orders")
+	ErrInvalidLimitNumber    = errors.New("limit number must be 1 or greater")
 )
 
-type Service struct {
+type Service interface {
+	Accept(orderID, userID, expire string) error
+	History() ([]*HistoryEntry, error)
+	ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error)
+	ImportOrders(path string) (int, error)
+	ListReturns(page, limit int) ([]*models.Order, error)
+	Process(userID, orderID, action string) error
+	Return(orderID string) error
+	Scroll(userID, lastID string, limit int) ([]*models.Order, string, error)
+}
+
+type orderService struct {
 	storage storage.Storage
 }
 
-func New(storage storage.Storage) *Service {
-	return &Service{storage: storage}
+func New(storage storage.Storage) Service {
+	return &orderService{storage: storage}
 }

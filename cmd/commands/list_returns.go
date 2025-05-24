@@ -11,7 +11,7 @@ var listReturnsCmd = &cobra.Command{
 	Short: "Get a list of returns",
 }
 
-func SetupListReturnsCmd(orderService *order.Service) {
+func SetupListReturnsCmd(orderSvc order.Service) {
 	listReturnsCmd.Flags().IntP(FlagPage, "n", 1, "Page number")
 	listReturnsCmd.Flags().IntP(FlagLimit, "m", 0, "Orders per page")
 
@@ -31,14 +31,14 @@ func SetupListReturnsCmd(orderService *order.Service) {
 			return
 		}
 
-		orders, err := orderService.ListReturns(page, limit)
+		orders, err := orderSvc.ListReturns(page, limit)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
 
 		for _, o := range orders {
-			fmt.Printf("RETURN: %s %s %s %s\n", o.ID, o.UserID, o.ReturnedAt)
+			fmt.Printf("RETURN: %s %s %s\n", o.ID, o.UserID, o.ReturnedAt)
 		}
 
 		fmt.Printf("PAGE: %d LIMIT: %d\n", page, limit)

@@ -12,7 +12,7 @@ var processCmd = &cobra.Command{
 	Short: "Issue orders or accept customer returns",
 }
 
-func SetupProcessCmd(orderService *order.Service) {
+func SetupProcessCmd(orderSvc order.Service) {
 	processCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
 	processCmd.Flags().StringP(FlagAction, "a", "", "Expires")
 	processCmd.Flags().StringP(FlagOrderIDs, "o", "", "Order ID")
@@ -43,7 +43,7 @@ func SetupProcessCmd(orderService *order.Service) {
 		sliceOrderIDs := strings.Split(orderIDs, ",")
 
 		for _, orderID := range sliceOrderIDs {
-			if err = orderService.Process(userID, orderID, action); err != nil {
+			if err = orderSvc.Process(userID, orderID, action); err != nil {
 				fmt.Printf("ERROR %s: %s\n", orderID, err)
 				continue
 			}

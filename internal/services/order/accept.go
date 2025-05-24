@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (s *Service) Accept(orderID, userID, expire string) error {
+func (s *orderService) Accept(orderID, userID, expire string) error {
 	const op = "services.order.Accept"
 
 	if orderID == "" {
