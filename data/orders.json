@@ -1,1 +1,282 @@
-[]
+[
+  {
+    "id": "20",
+    "user_id": "1",
+    "storage_deadline": "2025-05-25T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "21",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "22",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "23",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "24",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "25",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:03:58.348027+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:03:58.348027+03:00"
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "user_id": "1",
+    "storage_deadline": "2025-05-25T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T17:57:19.325847+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T17:57:19.325847+03:00"
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T17:57:19.325847+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T17:57:19.325847+03:00"
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "user_id": "1",
+    "storage_deadline": "2025-05-25T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T17:49:37.424907+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T17:49:37.424907+03:00"
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "user_id": "2",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T17:49:37.424907+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T17:49:37.424907+03:00"
+      }
+    ]
+  },
+  {
+    "id": "ORD001",
+    "user_id": "USR001",
+    "storage_deadline": "2025-05-25T00:00:00Z",
+    "status": "returned",
+    "created_at": "2025-05-24T18:36:34.115081+03:00",
+    "issued_at": null,
+    "returned_at": "2025-05-24T18:46:07.80757+03:00",
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:36:34.115081+03:00"
+      },
+      {
+        "status": "issued",
+        "timestamp": "2025-05-24T18:44:32.933905+03:00"
+      },
+      {
+        "status": "returned",
+        "timestamp": "2025-05-24T18:46:07.80757+03:00"
+      }
+    ]
+  },
+  {
+    "id": "ORD002",
+    "user_id": "USR001",
+    "storage_deadline": "2025-05-24T00:00:00Z",
+    "status": "archived",
+    "created_at": "2025-05-24T18:36:42.837709+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": "2025-05-24T18:43:55.166918+03:00",
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:36:42.837709+03:00"
+      }
+    ]
+  },
+  {
+    "id": "ORD003",
+    "user_id": "USR001",
+    "storage_deadline": "2025-05-27T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-24T18:53:31.251736+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-24T18:53:31.251736+03:00"
+      }
+    ]
+  },
+  {
+    "id": "-e",
+    "user_id": "111",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-25T22:52:15.313554+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-25T22:52:15.313554+03:00"
+      }
+    ]
+  },
+  {
+    "id": "-u",
+    "user_id": "111",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-25T22:54:58.570819+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-25T22:54:58.570819+03:00"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "user_id": "1",
+    "storage_deadline": "2025-05-26T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-25T23:00:09.45595+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-25T23:00:09.45595+03:00"
+      }
+    ]
+  },
+  {
+    "id": "100",
+    "user_id": "100",
+    "storage_deadline": "2025-05-27T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-05-25T23:16:52.050513+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-05-25T23:16:52.050513+03:00"
+      }
+    ]
+  }
+]

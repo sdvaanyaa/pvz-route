@@ -12,11 +12,11 @@ var listOrdersCmd = &cobra.Command{
 }
 
 func setupListOrdersCmd(orderSvc order.Service) {
-	listOrdersCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
-	listOrdersCmd.Flags().BoolP(FlagInPVZ, "p", false, "Show only orders in PV")
-	listOrdersCmd.Flags().IntP(FlagLast, "l", 0, "Show last N orders")
-	listOrdersCmd.Flags().IntP(FlagPage, "n", 1, "Page number")
-	listOrdersCmd.Flags().IntP(FlagLimit, "m", 0, "Orders per page")
+	listOrdersCmd.Flags().StringP(FlagUserID, ShortUserID, "", "User ID")
+	listOrdersCmd.Flags().BoolP(FlagInPVZ, ShortInPVZ, false, "Show only orders in PV")
+	listOrdersCmd.Flags().IntP(FlagLast, ShortLast, 0, "Show last N orders")
+	listOrdersCmd.Flags().IntP(FlagPage, ShortPage, 1, "Page number")
+	listOrdersCmd.Flags().IntP(FlagLimit, ShortLimit, 0, "Orders per page")
 
 	_ = listOrdersCmd.MarkFlagRequired(FlagUserID)
 

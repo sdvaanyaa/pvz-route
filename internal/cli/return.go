@@ -12,7 +12,7 @@ var returnCmd = &cobra.Command{
 }
 
 func setupReturnCmd(orderSvc order.Service) {
-	returnCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
+	returnCmd.Flags().StringP(FlagOrderID, ShortOrderID, "", "Order ID")
 
 	_ = returnCmd.MarkFlagRequired(FlagOrderID)
 

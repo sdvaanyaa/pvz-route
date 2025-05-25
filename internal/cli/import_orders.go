@@ -12,7 +12,7 @@ var importCmd = &cobra.Command{
 }
 
 func setupImportCmd(orderSvc order.Service) {
-	importCmd.Flags().StringP(FlagFile, "f", "", "File Path")
+	importCmd.Flags().StringP(FlagFile, ShortFile, "", "File Path")
 
 	_ = importCmd.MarkFlagRequired(FlagFile)
 

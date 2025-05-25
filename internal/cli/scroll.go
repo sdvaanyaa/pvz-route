@@ -15,9 +15,9 @@ var scrollCmd = &cobra.Command{
 }
 
 func setupScrollCmd(orderSvc order.Service) {
-	scrollCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
-	scrollCmd.Flags().StringP(FlagLast, "l", "0", "Last ID")
-	scrollCmd.Flags().IntP(FlagLimit, "n", 20, "Number of orders to fetch (default 20)")
+	scrollCmd.Flags().StringP(FlagUserID, ShortUserID, "", "User ID")
+	scrollCmd.Flags().StringP(FlagLast, ShortLast, "0", "Last ID")
+	scrollCmd.Flags().IntP(FlagLimit, ShortLimit, 20, "Number of orders to fetch (default 20)")
 
 	_ = scrollCmd.MarkFlagRequired(FlagUserID)
 

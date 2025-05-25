@@ -13,9 +13,9 @@ var processCmd = &cobra.Command{
 }
 
 func setupProcessCmd(orderSvc order.Service) {
-	processCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
-	processCmd.Flags().StringP(FlagAction, "a", "", "Action: issue or return")
-	processCmd.Flags().StringP(FlagOrderIDs, "o", "", "Order IDs")
+	processCmd.Flags().StringP(FlagUserID, ShortUserID, "", "User ID")
+	processCmd.Flags().StringP(FlagAction, ShortAction, "", "Action: issue or return")
+	processCmd.Flags().StringP(FlagOrderIDs, ShortOrderID, "", "Order IDs")
 
 	_ = processCmd.MarkFlagRequired(FlagUserID)
 	_ = processCmd.MarkFlagRequired(FlagAction)

@@ -12,9 +12,9 @@ var acceptCmd = &cobra.Command{
 }
 
 func setupAcceptCmd(orderSvc order.Service) {
-	acceptCmd.Flags().StringP(FlagOrderID, "o", "", "Order ID")
-	acceptCmd.Flags().StringP(FlagUserID, "u", "", "User ID")
-	acceptCmd.Flags().StringP(FlagExpires, "e", "", "Expires")
+	acceptCmd.Flags().StringP(FlagOrderID, ShortOrderID, "", "Order ID")
+	acceptCmd.Flags().StringP(FlagUserID, ShortUserID, "", "User ID")
+	acceptCmd.Flags().StringP(FlagExpires, ShortExpires, "", "Expires")
 
 	_ = acceptCmd.MarkFlagRequired(FlagOrderID)
 	_ = acceptCmd.MarkFlagRequired(FlagUserID)
@@ -38,7 +38,6 @@ func setupAcceptCmd(orderSvc order.Service) {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
-
 		if err = orderSvc.Accept(orderID, userID, expire); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

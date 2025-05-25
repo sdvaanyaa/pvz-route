@@ -18,11 +18,57 @@ const (
 	FlagFile     = "file"
 )
 
+const (
+	ShortOrderID = "o"
+	ShortUserID  = "u"
+	ShortExpires = "e"
+	ShortInPVZ   = "p"
+	ShortLast    = "l"
+	ShortPage    = "n"
+	ShortLimit   = "m"
+	ShortAction  = "a"
+	ShortFile    = "f"
+)
+
+var globalFlagSet = map[string]bool{
+	"--" + FlagOrderID:  true,
+	"-" + ShortOrderID:  true,
+	"--" + FlagUserID:   true,
+	"-" + ShortUserID:   true,
+	"--" + FlagExpires:  true,
+	"-" + ShortExpires:  true,
+	"--" + FlagInPVZ:    true,
+	"-" + ShortInPVZ:    true,
+	"--" + FlagLast:     true,
+	"-" + ShortLast:     true,
+	"--" + FlagPage:     true,
+	"-" + ShortPage:     true,
+	"--" + FlagLimit:    true,
+	"-" + ShortLimit:    true,
+	"--" + FlagOrderIDs: true,
+	"--" + FlagAction:   true,
+	"-" + ShortAction:   true,
+	"--" + FlagFile:     true,
+	"-" + ShortFile:     true,
+}
+
+func validateFlagValue(val string) error {
+	if globalFlagSet[val] {
+		return fmt.Errorf("flag value cannot be another flag: %s", val)
+	}
+	return nil
+}
+
 func getFlagString(cmd *cobra.Command, name string) (string, error) {
 	val, err := cmd.Flags().GetString(name)
 	if err != nil {
 		return "", fmt.Errorf("cannot read flag --%s: %w", name, err)
 	}
+
+	if err = validateFlagValue(val); err != nil {
+		return "", err
+	}
+
 	return val, nil
 }
 
