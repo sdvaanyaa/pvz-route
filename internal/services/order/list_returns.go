@@ -10,10 +10,6 @@ func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
 		return nil, ErrInvalidPageNumber
 	}
 
-	if limit < 1 {
-		return nil, ErrInvalidLastNumber
-	}
-
 	orders, err := s.storage.GetOrders()
 	if err != nil {
 		return nil, err
@@ -30,15 +26,17 @@ func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
 		return returns[i].ReturnedAt.After(*returns[j].ReturnedAt)
 	})
 
-	start := (page - 1) * limit
-	if start >= len(orders) {
-		returns = []*models.Order{}
-	} else {
-		end := start + limit
-		if end > len(returns) {
-			end = len(returns)
+	if limit > 0 {
+		start := (page - 1) * limit
+		if start >= len(returns) {
+			returns = []*models.Order{}
+		} else {
+			end := start + limit
+			if end > len(returns) {
+				end = len(returns)
+			}
+			returns = returns[start:end]
 		}
-		returns = returns[start:end]
 	}
 
 	return returns, nil

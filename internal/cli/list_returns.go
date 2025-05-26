@@ -15,9 +15,6 @@ func setupListReturnsCmd(orderSvc order.Service) {
 	listReturnsCmd.Flags().IntP(FlagPage, ShortPage, 1, "Page number")
 	listReturnsCmd.Flags().IntP(FlagLimit, ShortLimit, 0, "Orders per page")
 
-	_ = listReturnsCmd.MarkFlagRequired(FlagPage)
-	_ = listReturnsCmd.MarkFlagRequired(FlagLimit)
-
 	listReturnsCmd.Run = func(cmd *cobra.Command, args []string) {
 		page, err := getFlagInt(cmd, FlagPage)
 		if err != nil {
