@@ -38,6 +38,7 @@ func setupAcceptCmd(orderSvc order.Service) {
 			fmt.Printf("ERROR: %s\n", err)
 			return
 		}
+
 		if err = orderSvc.Accept(orderID, userID, expire); err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return

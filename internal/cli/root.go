@@ -45,6 +45,10 @@ func Execute() {
 			continue
 		}
 
+		for _, subCmd := range rootCmd.Commands() {
+			resetFlags(subCmd)
+		}
+
 		args := strings.Fields(input)
 		os.Args = []string{os.Args[0]}
 		os.Args = append(os.Args, args...)

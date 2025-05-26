@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -86,4 +87,10 @@ func getFlagInt(cmd *cobra.Command, name string) (int, error) {
 		return 0, fmt.Errorf("cannot read flag --%s: %w", name, err)
 	}
 	return val, nil
+}
+
+func resetFlags(cmd *cobra.Command) {
+	cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		_ = flag.Value.Set(flag.DefValue)
+	})
 }
