@@ -12,6 +12,10 @@ import (
 
 var rootCmd = &cobra.Command{
 	Short: "PVZ CLI for managing orders",
+
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDefaultCmd: true,
+	},
 }
 
 func Setup(orderSvc order.Service) {
