@@ -4,7 +4,7 @@
 ```
 Command: accept-order
 Description: Принять заказ от курьера с выбором упаковки.
-Usage: accept-order --order-id <id> --user-id <id> --expires <yyyy-mm-dd> [--package <bag|box|film|bag+film|box+film> --weight <float> --price <float>]
+Usage: accept-order --order-id <id> --user-id <id> --expires <yyyy-mm-dd> --weight <float> --price <float> [--package <bag|box|film|bag+film|box+film>]
 Output (успех):
   ORDER_ACCEPTED: <order_id>
   PACKAGE: <type>
