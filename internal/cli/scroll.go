@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/spf13/cobra"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/packaging"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"os"
 	"strings"
+	"time"
 )
 
 var scrollCmd = &cobra.Command{
@@ -22,19 +24,7 @@ func setupScrollCmd(orderSvc order.Service) {
 	_ = scrollCmd.MarkFlagRequired(FlagUserID)
 
 	scrollCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := getFlagString(cmd, FlagUserID)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		lastID, err := getFlagString(cmd, FlagLast)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		limit, err := getFlagInt(cmd, FlagLimit)
+		userID, lastID, limit, err := parseScrollFlags(cmd)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
@@ -47,6 +37,25 @@ func setupScrollCmd(orderSvc order.Service) {
 	}
 }
 
+func parseScrollFlags(cmd *cobra.Command) (string, string, int, error) {
+	userID, err := getFlagString(cmd, FlagUserID)
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	lastID, err := getFlagString(cmd, FlagLast)
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	limit, err := getFlagInt(cmd, FlagLimit)
+	if err != nil {
+		return "", "", 0, err
+	}
+
+	return userID, lastID, limit, nil
+}
+
 func runScrollLoop(svc order.Service, userID, lastID string, limit int) error {
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -57,17 +66,26 @@ func runScrollLoop(svc order.Service, userID, lastID string, limit int) error {
 		}
 
 		for _, o := range orders {
-			fmt.Printf("ORDER: %s %s %s\n",
+			formatedTime := o.StorageExpire.Format(time.DateOnly)
+
+			if o.PackageType == "" {
+				o.PackageType = packaging.PackageNone
+			}
+
+			fmt.Printf("ORDER: %s %s %s %s %.2f %.2f\n",
 				o.ID,
 				o.Status,
-				o.StorageExpire.Format("02 Jan 15:04"),
+				formatedTime,
+				o.PackageType,
+				o.Weight,
+				o.Price,
 			)
 		}
 
 		fmt.Printf("NEXT: %s\n", nextLastID)
 
 		if nextLastID == "" {
-			fmt.Println("No more orders. Exiting scroll mode.")
+			fmt.Println("no more orders, exiting scroll mode.")
 			return nil
 		}
 

@@ -24,4 +24,7 @@ type Order struct {
 	ReturnedAt    *time.Time          `json:"returned_at"`
 	ArchivedAt    *time.Time          `json:"archived_at"`
 	History       []OrderStatusChange `json:"history"`
+	Weight        float64             `json:"weight"`
+	Price         float64             `json:"price"`
+	PackageType   string              `json:"package"`
 }

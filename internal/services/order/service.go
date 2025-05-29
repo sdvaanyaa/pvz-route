@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	Accept(orderID, userID, expire string) error
+	Accept(orderID, userID, expire string, weight, price float64, packageType string) (*models.Order, error)
 	History() ([]*HistoryEntry, error)
 	ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error)
 	ImportOrders(path string) (int, error)

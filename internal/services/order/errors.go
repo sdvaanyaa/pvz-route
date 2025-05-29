@@ -6,7 +6,6 @@ var (
 	ErrEmptyOrderID          = errors.New("order ID must not be empty")
 	ErrEmptyUserID           = errors.New("user ID must not be empty")
 	ErrInvalidPageNumber     = errors.New("page number must be 1 or greater")
-	ErrInvalidLastNumber     = errors.New("last number must be 1 or greater")
 	ErrInvalidLimitNumber    = errors.New("limit number must be 1 or greater")
 	ErrInvalidDeadlineFormat = errors.New("deadline must be in YYYY-MM-DD format")
 
@@ -22,4 +21,7 @@ var (
 	ErrEmptyFilePath    = errors.New("file path must not be empty")
 	ErrEmptyImportFile  = errors.New("import file is empty")
 	ErrEmptyValidOrders = errors.New("import file does not contain valid orders")
+
+	ErrInvalidPrice  = errors.New("price must be greater than zero")
+	ErrInvalidWeight = errors.New("weight must be greater than zero")
 )

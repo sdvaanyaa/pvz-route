@@ -3,7 +3,9 @@ package cli
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/packaging"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
+	"time"
 )
 
 var listOrdersCmd = &cobra.Command{
@@ -21,31 +23,7 @@ func setupListOrdersCmd(orderSvc order.Service) {
 	_ = listOrdersCmd.MarkFlagRequired(FlagUserID)
 
 	listOrdersCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := getFlagString(cmd, FlagUserID)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		inPVZ, err := getFlagBool(cmd, FlagInPVZ)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		last, err := getFlagInt(cmd, FlagLast)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		page, err := getFlagInt(cmd, FlagPage)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		limit, err := getFlagInt(cmd, FlagLimit)
+		userID, inPVZ, last, page, limit, err := parseListOrdersFlags(cmd)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
@@ -58,8 +36,22 @@ func setupListOrdersCmd(orderSvc order.Service) {
 		}
 
 		for _, o := range orders {
-			formatedTime := o.StorageExpire.Format("02 Jan 15:04")
-			fmt.Printf("ORDER: %s %s %s %s\n", o.ID, o.UserID, o.Status, formatedTime)
+			formatedTime := o.StorageExpire.Format(time.DateOnly)
+
+			if o.PackageType == "" {
+				o.PackageType = packaging.PackageNone
+			}
+
+			fmt.Printf(
+				"ORDER: %s %s %s %s %s %.2f %.2f\n",
+				o.ID,
+				o.UserID,
+				o.Status,
+				formatedTime,
+				o.PackageType,
+				o.Weight,
+				o.Price,
+			)
 		}
 
 		fmt.Printf("TOTAL: %d\n", total)
@@ -68,4 +60,33 @@ func setupListOrdersCmd(orderSvc order.Service) {
 
 func init() {
 	rootCmd.AddCommand(listOrdersCmd)
+}
+
+func parseListOrdersFlags(cmd *cobra.Command) (string, bool, int, int, int, error) {
+	userID, err := getFlagString(cmd, FlagUserID)
+	if err != nil {
+		return "", false, 0, 0, 0, err
+	}
+
+	inPVZ, err := getFlagBool(cmd, FlagInPVZ)
+	if err != nil {
+		return "", false, 0, 0, 0, err
+	}
+
+	last, err := getFlagInt(cmd, FlagLast)
+	if err != nil {
+		return "", false, 0, 0, 0, err
+	}
+
+	page, err := getFlagInt(cmd, FlagPage)
+	if err != nil {
+		return "", false, 0, 0, 0, err
+	}
+
+	limit, err := getFlagInt(cmd, FlagLimit)
+	if err != nil {
+		return "", false, 0, 0, 0, err
+	}
+
+	return userID, inPVZ, last, page, limit, nil
 }

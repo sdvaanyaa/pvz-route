@@ -55,7 +55,7 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 			continue
 		}
 
-		newOrder := &models.Order{
+		newO := &models.Order{
 			ID:            order.ID,
 			UserID:        order.UserID,
 			StorageExpire: *order.StorageExpire,
@@ -69,7 +69,7 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 			},
 		}
 
-		newOrders = append(newOrders, newOrder)
+		newOrders = append(newOrders, newO)
 		existIDs[order.ID] = struct{}{}
 	}
 
