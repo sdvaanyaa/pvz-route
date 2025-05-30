@@ -5,6 +5,11 @@ import (
 	"sort"
 )
 
+// ListOrders retrieves orders for a given userID,
+// optionally filtering by orders currently in the pickup point (inPVZ).
+// Supports pagination through page and limit parameters,
+// and limiting results to the last N orders with `last` parameter.
+// Returns a slice of orders, total count before pagination, and an error if any.
 func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit int) ([]*models.Order, int, error) {
 	if userID == "" {
 		return nil, 0, ErrEmptyUserID

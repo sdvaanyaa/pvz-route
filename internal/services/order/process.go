@@ -7,6 +7,10 @@ import (
 
 const returnWindow = 48 * time.Hour
 
+// Process executes an action ("issue" or "return") on an order
+// for a given userID and orderID.
+// It validates inputs, verifies order ownership and status,
+// updates the order status accordingly, and saves changes to storage.
 func (s *orderService) Process(userID, orderID, action string) error {
 	if userID == "" {
 		return ErrEmptyUserID

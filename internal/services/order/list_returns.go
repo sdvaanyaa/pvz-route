@@ -5,6 +5,10 @@ import (
 	"sort"
 )
 
+// ListReturns retrieves orders that have been returned,
+// sorts them by return date in descending order,
+// and applies pagination based on the given page and limit parameters.
+// Returns a slice of returned orders or an error.
 func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
 	if page < 1 {
 		return nil, ErrInvalidPageNumber

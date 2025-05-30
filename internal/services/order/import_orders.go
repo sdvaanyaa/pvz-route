@@ -13,6 +13,9 @@ type importOrder struct {
 	StorageExpire *time.Time `json:"storage_deadline"`
 }
 
+// ImportOrders reads orders from a JSON file at the given path,
+// filters out duplicates and invalid entries, saves new valid orders
+// to the storage, and returns the count of successfully imported orders.
 func (s *orderService) ImportOrders(path string) (int, error) {
 	if path == "" {
 		return 0, ErrEmptyFilePath

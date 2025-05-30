@@ -18,6 +18,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// Setup initializes all CLI commands with the provided order service.
 func Setup(orderSvc order.Service) {
 	setupAcceptCmd(orderSvc)
 	setupReturnCmd(orderSvc)
@@ -29,6 +30,12 @@ func Setup(orderSvc order.Service) {
 	setupScrollCmd(orderSvc)
 }
 
+// Execute starts an interactive CLI session, reading user input line by line.
+// It prompts the user, parses the input into commands and arguments,
+// resets flags from the previous command invocation before each new execution,
+// and runs the corresponding command.
+// The session continues until the user types "exit" or input ends.
+// Any input reading errors are logged.
 func Execute() {
 	fmt.Println("PVZ CLI. Type 'help' for cli or 'exit' to quit.")
 

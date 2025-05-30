@@ -11,6 +11,8 @@ type HistoryEntry struct {
 	Timestamp time.Time
 }
 
+// History returns a slice of all order status changes across all orders,
+// sorted by timestamp in descending order (most recent first).
 func (s *orderService) History() ([]*HistoryEntry, error) {
 	orders, err := s.storage.GetOrders()
 	if err != nil {

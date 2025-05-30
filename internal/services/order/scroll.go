@@ -5,6 +5,11 @@ import (
 	"sort"
 )
 
+// Scroll returns a slice of active orders for the specified user,
+// starting after the order with lastID, limited to the given count.
+// It returns the selected orders, the ID of the last order in the slice for pagination,
+// and an error if any.
+// Orders are sorted by their ID in ascending order.
 func (s *orderService) Scroll(userID, lastID string, limit int) ([]*models.Order, string, error) {
 	if userID == "" {
 		return nil, "", ErrEmptyUserID

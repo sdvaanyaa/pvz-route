@@ -26,6 +26,8 @@ var (
 	ErrStorageIO          = errors.New("failed to access storage")
 )
 
+// New creates a new Storage instance, initializing the storage directory
+// and the orders JSON file if it does not exist.
 func New(storagePath string) (*Storage, error) {
 	if err := os.MkdirAll(storagePath, dirPerm); err != nil {
 		return nil, err
@@ -42,6 +44,9 @@ func New(storagePath string) (*Storage, error) {
 	return &Storage{ordersPath}, nil
 }
 
+// SaveOrder saves a new order to the JSON storage.
+// Validates that the order is not expired and does not already exist.
+// Returns an error if validation fails or the operation cannot be completed.
 func (s *Storage) SaveOrder(order *models.Order) error {
 	if time.Now().After(order.StorageExpire) {
 		return ErrOrderExpired
@@ -67,6 +72,8 @@ func (s *Storage) SaveOrder(order *models.Order) error {
 	return nil
 }
 
+// GetOrder retrieves an order by its ID from the JSON storage.
+// Returns the order and nil if found, or nil and ErrOrderNotFound if not found.
 func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {
@@ -82,6 +89,8 @@ func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
 	return nil, ErrOrderNotFound
 }
 
+// UpdateOrder updates an existing order in the JSON storage.
+// Returns ErrOrderNotFound if the order does not exist or an error if the operation fails.
 func (s *Storage) UpdateOrder(order *models.Order) error {
 	orders, err := s.GetOrders()
 	if err != nil {
@@ -104,6 +113,8 @@ func (s *Storage) UpdateOrder(order *models.Order) error {
 	return s.SaveOrders(orders)
 }
 
+// GetOrdersByUser retrieves all orders for a given user from the JSON storage.
+// Returns a slice of orders and an error if the operation fails.
 func (s *Storage) GetOrdersByUser(userID string) ([]*models.Order, error) {
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {
@@ -120,6 +131,9 @@ func (s *Storage) GetOrdersByUser(userID string) ([]*models.Order, error) {
 	return userOrders, nil
 }
 
+// SaveOrders saves a list of orders to the JSON storage.
+// Overwrites the existing orders.json file.
+// Returns an error if the operation fails.
 func (s *Storage) SaveOrders(orders []*models.Order) error {
 	if err := writeJSON(s.ordersPath, orders); err != nil {
 		return err
@@ -128,6 +142,8 @@ func (s *Storage) SaveOrders(orders []*models.Order) error {
 	return nil
 }
 
+// GetOrders retrieves all orders from the JSON storage.
+// Returns a slice of orders and an error if the operation fails.
 func (s *Storage) GetOrders() ([]*models.Order, error) {
 	var orders []*models.Order
 	if err := readJSON(s.ordersPath, &orders); err != nil {

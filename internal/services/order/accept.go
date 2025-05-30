@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// Accept validates input parameters, applies packaging strategy, creates a new order,
+// and saves it to storage. Returns the created order or an error if validation or saving fails.
 func (s *orderService) Accept(
 	orderID, userID, expire string,
 	weight, price float64,
