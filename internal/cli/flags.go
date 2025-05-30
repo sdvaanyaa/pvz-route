@@ -19,7 +19,7 @@ const (
 	FlagFile        = "file"
 	FlagPrice       = "price"
 	FlagWeight      = "weight"
-	FlagPackageType = "package-type"
+	FlagPackageType = "package"
 )
 
 const (
