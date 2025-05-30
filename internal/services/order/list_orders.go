@@ -19,25 +19,10 @@ func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit i
 		return nil, 0, err
 	}
 
-	activeOrders := make([]*models.Order, 0, len(orders))
-	for _, order := range orders {
-		if order.Status != models.StatusArchived {
-			activeOrders = append(activeOrders, order)
-		}
-	}
-
-	orders = activeOrders
+	orders = filterActiveOrders(orders)
 
 	if inPVZ {
-		inPVZOrders := make([]*models.Order, 0, len(orders))
-
-		for _, order := range orders {
-			if order.Status == models.StatusAccepted {
-				inPVZOrders = append(inPVZOrders, order)
-			}
-		}
-
-		orders = inPVZOrders
+		orders = filterAcceptedOrders(orders)
 	}
 
 	sort.Slice(orders, func(i, j int) bool {
@@ -50,18 +35,7 @@ func (s *orderService) ListOrders(userID string, inPVZ bool, last, page, limit i
 
 	total := len(orders)
 
-	if limit > 0 {
-		start := (page - 1) * limit
-		if start >= len(orders) {
-			orders = []*models.Order{}
-		} else {
-			end := start + limit
-			if end > len(orders) {
-				end = len(orders)
-			}
-			orders = orders[start:end]
-		}
-	}
+	orders = paginateOrders(orders, page, limit)
 
 	return orders, total, nil
 }

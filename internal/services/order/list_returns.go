@@ -15,29 +15,13 @@ func (s *orderService) ListReturns(page, limit int) ([]*models.Order, error) {
 		return nil, err
 	}
 
-	returns := make([]*models.Order, 0, len(orders))
-	for _, order := range orders {
-		if order.Status == models.StatusReturned && order.ReturnedAt != nil {
-			returns = append(returns, order)
-		}
-	}
+	returns := filterReturnedOrders(orders)
 
 	sort.Slice(returns, func(i, j int) bool {
 		return returns[i].ReturnedAt.After(*returns[j].ReturnedAt)
 	})
 
-	if limit > 0 {
-		start := (page - 1) * limit
-		if start >= len(returns) {
-			returns = []*models.Order{}
-		} else {
-			end := start + limit
-			if end > len(returns) {
-				end = len(returns)
-			}
-			returns = returns[start:end]
-		}
-	}
+	returns = paginateOrders(returns, page, limit)
 
 	return returns, nil
 }

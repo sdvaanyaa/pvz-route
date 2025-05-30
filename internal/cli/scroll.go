@@ -4,12 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/spf13/cobra"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/models"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/packaging"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"os"
 	"strings"
 	"time"
 )
+
+const defaultLimit = 20
 
 var scrollCmd = &cobra.Command{
 	Use:   "scroll-orders",
@@ -19,7 +22,7 @@ var scrollCmd = &cobra.Command{
 func setupScrollCmd(orderSvc order.Service) {
 	scrollCmd.Flags().StringP(FlagUserID, ShortUserID, "", "User ID")
 	scrollCmd.Flags().StringP(FlagLast, ShortLast, "0", "Last ID")
-	scrollCmd.Flags().IntP(FlagLimit, ShortLimit, 20, "Number of orders to fetch (default 20)")
+	scrollCmd.Flags().IntP(FlagLimit, ShortLimit, defaultLimit, "Number of orders to fetch (default 20)")
 
 	_ = scrollCmd.MarkFlagRequired(FlagUserID)
 
@@ -65,22 +68,7 @@ func runScrollLoop(svc order.Service, userID, lastID string, limit int) error {
 			return err
 		}
 
-		for _, o := range orders {
-			formatedTime := o.StorageExpire.Format(time.DateOnly)
-
-			if o.PackageType == "" {
-				o.PackageType = packaging.PackageNone
-			}
-
-			fmt.Printf("ORDER: %s %s %s %s %.2f %.2f\n",
-				o.ID,
-				o.Status,
-				formatedTime,
-				o.PackageType,
-				o.Weight,
-				o.Price,
-			)
-		}
+		printOrders(orders)
 
 		fmt.Printf("NEXT: %s\n", nextLastID)
 
@@ -89,13 +77,12 @@ func runScrollLoop(svc order.Service, userID, lastID string, limit int) error {
 			return nil
 		}
 
-		fmt.Print("> ")
-		if !scanner.Scan() {
-			return fmt.Errorf("failed to read input: %w", scanner.Err())
+		cmd, err := readUserCommand(scanner)
+		if err != nil {
+			return err
 		}
-		input := strings.TrimSpace(scanner.Text())
 
-		switch input {
+		switch cmd {
 		case "next":
 			lastID = nextLastID
 		case "exit":
@@ -104,6 +91,33 @@ func runScrollLoop(svc order.Service, userID, lastID string, limit int) error {
 			fmt.Println("expected 'next' or 'exit'")
 		}
 	}
+}
+
+func printOrders(orders []*models.Order) {
+	for _, o := range orders {
+		formattedTime := o.StorageExpire.Format(time.DateOnly)
+
+		if o.PackageType == "" {
+			o.PackageType = packaging.PackageNone
+		}
+
+		fmt.Printf("ORDER: %s %s %s %s %.2f %.2f\n",
+			o.ID,
+			o.Status,
+			formattedTime,
+			o.PackageType,
+			o.Weight,
+			o.Price,
+		)
+	}
+}
+
+func readUserCommand(scanner *bufio.Scanner) (string, error) {
+	fmt.Print("> ")
+	if !scanner.Scan() {
+		return "", fmt.Errorf("failed to read input: %w", scanner.Err())
+	}
+	return strings.TrimSpace(scanner.Text()), nil
 }
 
 func init() {

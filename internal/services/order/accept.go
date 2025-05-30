@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
-func (s *orderService) Accept(orderID, userID, expire string, weight, price float64, packageType string) (*models.Order, error) {
+func (s *orderService) Accept(
+	orderID, userID, expire string,
+	weight, price float64,
+	packageType string,
+) (*models.Order, error) {
 	if err := validateInputs(orderID, userID, price, weight); err != nil {
 		return nil, err
 	}
@@ -38,7 +42,12 @@ func (s *orderService) Accept(orderID, userID, expire string, weight, price floa
 	return order, s.storage.SaveOrder(order)
 }
 
-func newOrder(orderID, userID string, storageExpire time.Time, packageType string, weight, price float64) *models.Order {
+func newOrder(
+	orderID, userID string,
+	storageExpire time.Time,
+	packageType string,
+	weight, price float64,
+) *models.Order {
 	now := time.Now()
 	return &models.Order{
 		ID:            orderID,

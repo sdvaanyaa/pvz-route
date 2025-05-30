@@ -19,38 +19,38 @@ func (s *orderService) Scroll(userID, lastID string, limit int) ([]*models.Order
 		return nil, "", err
 	}
 
-	activeOrders := make([]*models.Order, 0, len(orders))
-	for _, order := range orders {
-		if order.Status != models.StatusArchived {
-			activeOrders = append(activeOrders, order)
-		}
-	}
+	activeOrders := filterActiveOrders(orders)
 
 	sort.Slice(activeOrders, func(i, j int) bool {
 		return activeOrders[i].ID < activeOrders[j].ID
 	})
 
-	start := 0
-	if lastID != "0" {
-		for i, order := range activeOrders {
-			if order.ID == lastID {
-				start = i + 1
-				break
-			}
-		}
-	}
+	start := findStartIndex(activeOrders, lastID)
 
-	end := start + limit
-	if end > len(activeOrders) {
-		end = len(activeOrders)
-	}
+	end := min(start+limit, len(activeOrders))
 
 	selected := activeOrders[start:end]
 
-	nextLastID := ""
-	if end < len(activeOrders) {
-		nextLastID = activeOrders[end-1].ID
-	}
+	nextLastID := getNextLastID(activeOrders, end)
 
 	return selected, nextLastID, nil
+}
+
+func findStartIndex(orders []*models.Order, lastID string) int {
+	if lastID == "0" {
+		return 0
+	}
+	for i, order := range orders {
+		if order.ID == lastID {
+			return i + 1
+		}
+	}
+	return 0
+}
+
+func getNextLastID(orders []*models.Order, end int) string {
+	if end < len(orders) {
+		return orders[end-1].ID
+	}
+	return ""
 }
