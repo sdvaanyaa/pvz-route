@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// Return marks an order as archived if its storage time has ended,
+// and it is not currently issued. It updates the order status and saves changes.
 func (s *orderService) Return(orderID string) error {
 	if orderID == "" {
 		return ErrEmptyOrderID

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
+	"time"
 )
 
 var historyCmd = &cobra.Command{
@@ -20,7 +21,7 @@ func setupHistoryCmd(orderSvc order.Service) {
 		}
 
 		for _, entry := range historyEntry {
-			formatedTime := entry.Timestamp.Format("02 Jan 15:04")
+			formatedTime := entry.Timestamp.Format(time.DateOnly)
 			fmt.Printf("HISTORY: %s %s %s\n", entry.OrderID, entry.Status, formatedTime)
 		}
 	}

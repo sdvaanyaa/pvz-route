@@ -1,0 +1,31 @@
+version: "2"
+
+run:
+  timeout: 1m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck
+    - errchkjson
+    - ineffassign
+    - unused
+    - goconst
+    - gocyclo
+    - misspell
+    - govet
+    - gocognit
+    - lll
+    - misspell
+    - mnd
+
+  settings:
+    errcheck:
+      check-type-assertions: true
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    gocyclo:
+      min-complexity: 10
+    gocognit:
+      min-complexity: 10

@@ -7,28 +7,34 @@ import (
 )
 
 const (
-	FlagOrderID  = "order-id"
-	FlagUserID   = "user-id"
-	FlagExpires  = "expires"
-	FlagLimit    = "limit"
-	FlagAction   = "action"
-	FlagOrderIDs = "order-ids"
-	FlagInPVZ    = "in-pvz"
-	FlagLast     = "last"
-	FlagPage     = "page"
-	FlagFile     = "file"
+	FlagOrderID     = "order-id"
+	FlagUserID      = "user-id"
+	FlagExpires     = "expires"
+	FlagLimit       = "limit"
+	FlagAction      = "action"
+	FlagOrderIDs    = "order-ids"
+	FlagInPVZ       = "in-pvz"
+	FlagLast        = "last"
+	FlagPage        = "page"
+	FlagFile        = "file"
+	FlagPrice       = "price"
+	FlagWeight      = "weight"
+	FlagPackageType = "package"
 )
 
 const (
-	ShortOrderID = "o"
-	ShortUserID  = "u"
-	ShortExpires = "e"
-	ShortInPVZ   = "p"
-	ShortLast    = "l"
-	ShortPage    = "n"
-	ShortLimit   = "m"
-	ShortAction  = "a"
-	ShortFile    = "f"
+	ShortOrderID     = "o"
+	ShortUserID      = "u"
+	ShortExpires     = "e"
+	ShortInPVZ       = "i"
+	ShortLast        = "l"
+	ShortPage        = "n"
+	ShortLimit       = "m"
+	ShortAction      = "a"
+	ShortFile        = "f"
+	ShortPrice       = "p"
+	ShortWeight      = "w"
+	ShortPackageType = "t"
 )
 
 var globalFlagSet = map[string]bool{
@@ -83,6 +89,14 @@ func getFlagBool(cmd *cobra.Command, name string) (bool, error) {
 
 func getFlagInt(cmd *cobra.Command, name string) (int, error) {
 	val, err := cmd.Flags().GetInt(name)
+	if err != nil {
+		return 0, fmt.Errorf("cannot read flag --%s: %w", name, err)
+	}
+	return val, nil
+}
+
+func getFlagFloat64(cmd *cobra.Command, name string) (float64, error) {
+	val, err := cmd.Flags().GetFloat64(name)
 	if err != nil {
 		return 0, fmt.Errorf("cannot read flag --%s: %w", name, err)
 	}

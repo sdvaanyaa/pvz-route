@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
+	"time"
 )
 
 var listReturnsCmd = &cobra.Command{
@@ -35,7 +36,8 @@ func setupListReturnsCmd(orderSvc order.Service) {
 		}
 
 		for _, o := range orders {
-			fmt.Printf("RETURN: %s %s %s\n", o.ID, o.UserID, o.ReturnedAt)
+			formatedTime := o.ReturnedAt.Format(time.DateOnly)
+			fmt.Printf("RETURN: %s %s %s\n", o.ID, o.UserID, formatedTime)
 		}
 
 		fmt.Printf("PAGE: %d LIMIT: %d\n", page, limit)

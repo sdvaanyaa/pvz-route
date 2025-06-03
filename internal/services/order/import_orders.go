@@ -13,19 +13,16 @@ type importOrder struct {
 	StorageExpire *time.Time `json:"storage_deadline"`
 }
 
+// ImportOrders reads orders from a JSON file at the given path,
+// filters out duplicates and invalid entries, saves new valid orders
+// to the storage, and returns the count of successfully imported orders.
 func (s *orderService) ImportOrders(path string) (int, error) {
 	if path == "" {
 		return 0, ErrEmptyFilePath
 	}
 
-	data, err := os.ReadFile(path)
+	orders, err := readOrdersFromFile(path)
 	if err != nil {
-		return 0, err
-	}
-
-	var orders []importOrder
-
-	if err = json.Unmarshal(data, &orders); err != nil {
 		return 0, err
 	}
 
@@ -38,40 +35,7 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 		return 0, err
 	}
 
-	existIDs := make(map[string]struct{}, len(existOrders))
-	for _, order := range existOrders {
-		existIDs[order.ID] = struct{}{}
-	}
-
-	newOrders := make([]*models.Order, 0, len(orders))
-	now := time.Now()
-
-	for _, order := range orders {
-		if _, ok := existIDs[order.ID]; ok {
-			continue
-		}
-
-		if !isOrderValid(order) {
-			continue
-		}
-
-		newOrder := &models.Order{
-			ID:            order.ID,
-			UserID:        order.UserID,
-			StorageExpire: *order.StorageExpire,
-			Status:        models.StatusAccepted,
-			CreatedAt:     now,
-			History: []models.OrderStatusChange{
-				{
-					Status:    models.StatusAccepted,
-					Timestamp: now,
-				},
-			},
-		}
-
-		newOrders = append(newOrders, newOrder)
-		existIDs[order.ID] = struct{}{}
-	}
+	newOrders := prepareNewOrders(orders, existOrders)
 
 	if len(newOrders) == 0 {
 		return 0, ErrEmptyValidOrders
@@ -90,9 +54,60 @@ func (s *orderService) ImportOrders(path string) (int, error) {
 	return importCount, nil
 }
 
-func isOrderValid(order importOrder) bool {
-	return order.ID != "" &&
-		order.UserID != "" &&
-		order.StorageExpire != nil &&
-		order.StorageExpire.After(time.Now())
+func prepareNewOrders(imports []*importOrder, existOrders []*models.Order) []*models.Order {
+	existIDs := make(map[string]struct{}, len(existOrders))
+	for _, o := range existOrders {
+		existIDs[o.ID] = struct{}{}
+	}
+
+	now := time.Now()
+	newOrders := make([]*models.Order, 0, len(imports))
+
+	for _, o := range imports {
+		if _, exists := existIDs[o.ID]; exists || !o.IsValid() {
+			continue
+		}
+		newOrders = append(newOrders, convertToModelOrder(o, now))
+		existIDs[o.ID] = struct{}{}
+	}
+
+	return newOrders
+}
+
+func convertToModelOrder(o *importOrder, now time.Time) *models.Order {
+	return &models.Order{
+		ID:            o.ID,
+		UserID:        o.UserID,
+		StorageExpire: *o.StorageExpire,
+		Status:        models.StatusAccepted,
+		CreatedAt:     now,
+		History: []models.OrderStatusChange{
+			{
+				Status:    models.StatusAccepted,
+				Timestamp: now,
+			},
+		},
+	}
+}
+
+func readOrdersFromFile(path string) ([]*importOrder, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var orders []*importOrder
+
+	if err = json.Unmarshal(data, &orders); err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
+
+func (o *importOrder) IsValid() bool {
+	return o.ID != "" &&
+		o.UserID != "" &&
+		o.StorageExpire != nil &&
+		o.StorageExpire.After(time.Now())
 }

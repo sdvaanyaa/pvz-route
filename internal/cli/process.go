@@ -22,19 +22,7 @@ func setupProcessCmd(orderSvc order.Service) {
 	_ = processCmd.MarkFlagRequired(FlagOrderIDs)
 
 	processCmd.Run = func(cmd *cobra.Command, args []string) {
-		userID, err := getFlagString(cmd, FlagUserID)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		action, err := getFlagString(cmd, FlagAction)
-		if err != nil {
-			fmt.Printf("ERROR: %s\n", err)
-			return
-		}
-
-		orderIDs, err := getFlagString(cmd, FlagOrderIDs)
+		userID, action, orderIDs, err := parseProcessFlags(cmd)
 		if err != nil {
 			fmt.Printf("ERROR: %s\n", err)
 			return
@@ -55,4 +43,23 @@ func setupProcessCmd(orderSvc order.Service) {
 
 func init() {
 	rootCmd.AddCommand(processCmd)
+}
+
+func parseProcessFlags(cmd *cobra.Command) (string, string, string, error) {
+	userID, err := getFlagString(cmd, FlagUserID)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	action, err := getFlagString(cmd, FlagAction)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	orderIDs, err := getFlagString(cmd, FlagOrderIDs)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return userID, action, orderIDs, nil
 }
