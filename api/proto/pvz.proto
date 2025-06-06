@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package pvz;
+
+option go_package = "gitlab.ozon.dev/sd_vaanyaa/homework/api/gen";
+
+import "google/protobuf/timestamp.proto";
+//import "validate/validate.proto";
+
+service OrderService {
+  rpc Accept(AcceptOrderRequest) returns (OrderResponse);
+  rpc Return(OrderIdRequest) returns (OrderResponse);
+  rpc Process(ProcessOrdersRequest) returns (ProcessResult);
+  rpc ListOrders(ListOrdersRequest) returns (OrdersList);
+  rpc ListReturns(ListReturnsRequest) returns (ReturnsList);
+  rpc History(GetHistoryRequest) returns (OrderHistoryList);
+}
+
+message AcceptOrderRequest {
+  string order_id = 1;
+  string user_id = 2;
+  google.protobuf.Timestamp expires_at = 3;
+  optional PackageType package_type = 4;
+  float weight = 5;
+  float price = 6;
+}
+
+message OrderIdRequest {
+  string order_id = 1;
+}
+
+message OrderResponse {
+  string order_id = 1;
+  OrderStatus status = 2;
+}
+
+message ProcessOrdersRequest {
+  string user_id = 1;
+  ActionType action = 2;
+  repeated string order_ids = 3;
+}
+
+message ProcessResult {
+  repeated string processed = 1;
+  repeated string errors = 2;
+}
+
+message ListOrdersRequest {
+  string user_id = 1;
+  bool in_pvz = 2;
+  optional uint32 last_n = 3;
+  optional Pagination pagination = 4;
+}
+
+message OrdersList {
+  repeated Order orders = 1;
+  int32 total = 2;
+}
+
+message ListReturnsRequest {
+  Pagination pagination = 1;
+}
+
+message ReturnsList {
+  repeated Order returns = 1;
+}
+
+message GetHistoryRequest {
+  Pagination pagination = 1;
+}
+
+message OrderHistoryList {
+  repeated OrderHistory history = 1;
+}
+
+message Order {
+  string order_id = 1;
+  string user_id = 2;
+  OrderStatus status = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  float weight = 5;
+  float total_price = 6;
+  optional PackageType package_type = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp issued_at = 9;
+  google.protobuf.Timestamp returned_at = 10;
+  google.protobuf.Timestamp archived_at = 11;
+}
+
+message OrderHistory {
+  string order_id = 1;
+  OrderStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_ACCEPTED = 1;
+  ORDER_STATUS_ISSUED = 2;
+  ORDER_STATUS_RETURNED = 3;
+  ORDER_STATUS_ARCHIVED = 4;
+}
+
+enum PackageType {
+  PACKAGE_TYPE_UNSPECIFIED = 0;
+  PACKAGE_TYPE_NONE = 1;
+  PACKAGE_TYPE_BAG = 2;
+  PACKAGE_TYPE_BOX = 3;
+  PACKAGE_TYPE_FILM = 4;
+  PACKAGE_TYPE_BAG_FILM = 5;
+  PACKAGE_TYPE_BOX_FILM = 6;
+}
+
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+  ACTION_TYPE_ISSUE = 1;
+  ACTION_TYPE_RETURN = 2;
+}
+
+message Pagination {
+  uint32 page = 1;
+  uint32 count_on_page = 2;
+}
