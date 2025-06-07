@@ -44,6 +44,7 @@ proto: vendor-proto
 	@protoc \
 		-I=$(PROTO_DIR) \
 		-I=vendor.protogen \
+		-I=vendor.protogen/protoc-gen-openapiv2/options \
 		--go_out=$(PROTO_OUT) \
 		--go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_OUT) \
@@ -54,7 +55,7 @@ proto: vendor-proto
 		--openapiv2_out=$(PROTO_OUT) \
 		$(PROTO_DIR)/pvz.proto
 
-vendor-proto: .vendor-proto/validate .vendor-proto/google/api
+vendor-proto: .vendor-proto/validate .vendor-proto/google/api .vendor-proto/openapiv2
 
 .vendor-proto/validate:
 	@echo "Fetching validate.proto"
@@ -66,3 +67,9 @@ vendor-proto: .vendor-proto/validate .vendor-proto/google/api
 	@mkdir -p vendor.protogen/google/api
 	@curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto -o vendor.protogen/google/api/annotations.proto
 	@curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto -o vendor.protogen/google/api/http.proto
+
+.vendor-proto/openapiv2:
+	@echo "Fetching openapiv2 proto files"
+	@mkdir -p vendor.protogen/protoc-gen-openapiv2/options
+	@curl -sSL https://raw.githubusercontent.com/grpc-ecosystem/grpc-gateway/main/protoc-gen-openapiv2/options/annotations.proto -o vendor.protogen/protoc-gen-openapiv2/options/annotations.proto
+	@curl -sSL https://raw.githubusercontent.com/grpc-ecosystem/grpc-gateway/main/protoc-gen-openapiv2/options/openapiv2.proto -o vendor.protogen/protoc-gen-openapiv2/options/openapiv2.proto

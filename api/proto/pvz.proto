@@ -15,12 +15,20 @@ service OrderService {
       post: "/orders/accept"
       body: "*"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Accept a new order"
+      description: "Creates a new order with specified details."
+    };
   }
 
   rpc Return(OrderIdRequest) returns (OrderResponse) {
     option (google.api.http) = {
       post: "/orders/return"
       body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Return an order"
+      description: "Marks an order as returned."
     };
   }
 
@@ -29,11 +37,19 @@ service OrderService {
       post: "/orders/process"
       body: "*"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Process multiple orders"
+      description: "Performs an action on multiple orders."
+    };
   }
 
   rpc ListOrders(ListOrdersRequest) returns (OrdersList) {
     option (google.api.http) = {
       get: "/orders"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "List orders"
+      description: "Retrieves a list of orders for a user."
     };
   }
 
@@ -41,11 +57,19 @@ service OrderService {
     option (google.api.http) = {
       get: "/returns"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "List returned orders"
+      description: "Retrieves a list of returned orders."
+    };
   }
 
   rpc History(GetHistoryRequest) returns (OrderHistoryList) {
     option (google.api.http) = {
       get: "/history"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get order history"
+      description: "Retrieves the history of order status changes."
     };
   }
 }
@@ -153,3 +177,15 @@ message Pagination {
   uint32 page = 1 [(validate.rules).uint32.lte = 100000];
   uint32 count_on_page = 2 [(validate.rules).uint32.lte = 100000];
 }
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "PVZ Service";
+    version: "1.0.0";
+    description: "Service for order management at the point of delivery.";
+  };
+  host: "localhost:8080";
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+};
