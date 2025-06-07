@@ -8,9 +8,10 @@ import (
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func packageTypeToString(pt gen.PackageType) string {
+func protoPackageTypeToString(pt gen.PackageType) string {
 	switch pt {
 	case gen.PackageType_PACKAGE_TYPE_NONE:
 		return packaging.PackageNone
@@ -29,7 +30,37 @@ func packageTypeToString(pt gen.PackageType) string {
 	}
 }
 
-func statusToProto(status string) gen.OrderStatus {
+func stringPackageTypeToProto(pt string) gen.PackageType {
+	switch pt {
+	case packaging.PackageNone:
+		return gen.PackageType_PACKAGE_TYPE_NONE
+	case packaging.PackageBag:
+		return gen.PackageType_PACKAGE_TYPE_BAG
+	case packaging.PackageBox:
+		return gen.PackageType_PACKAGE_TYPE_BOX
+	case packaging.PackageFilm:
+		return gen.PackageType_PACKAGE_TYPE_FILM
+	case packaging.PackageBagFilm:
+		return gen.PackageType_PACKAGE_TYPE_BAG_FILM
+	case packaging.PackageBoxFilm:
+		return gen.PackageType_PACKAGE_TYPE_BOX_FILM
+	default:
+		return gen.PackageType_PACKAGE_TYPE_NONE
+	}
+}
+
+func protoActionToString(at gen.ActionType) string {
+	switch at {
+	case gen.ActionType_ACTION_TYPE_ISSUE:
+		return "issue"
+	case gen.ActionType_ACTION_TYPE_RETURN:
+		return "return"
+	default:
+		return "invalid action type"
+	}
+}
+
+func stringStatusToProto(status string) gen.OrderStatus {
 	switch status {
 	case models.StatusAccepted:
 		return gen.OrderStatus_ORDER_STATUS_ACCEPTED
@@ -44,7 +75,41 @@ func statusToProto(status string) gen.OrderStatus {
 	}
 }
 
-func mapError(err error) error {
+func modelsOrderToProto(o *models.Order) *gen.Order {
+	packageType := gen.PackageType_PACKAGE_TYPE_NONE
+	if o.PackageType != "" {
+		packageType = stringPackageTypeToProto(o.PackageType)
+	}
+
+	var issuedAt, returnedAt, archivedAt *timestamppb.Timestamp
+	if o.IssuedAt != nil && !o.IssuedAt.IsZero() {
+		issuedAt = timestamppb.New(*o.IssuedAt)
+	}
+
+	if o.ReturnedAt != nil && !o.ReturnedAt.IsZero() {
+		returnedAt = timestamppb.New(*o.ReturnedAt)
+	}
+
+	if o.ArchivedAt != nil && !o.ArchivedAt.IsZero() {
+		archivedAt = timestamppb.New(*o.ArchivedAt)
+	}
+
+	return &gen.Order{
+		OrderId:     o.ID,
+		UserId:      o.UserID,
+		Status:      stringStatusToProto(o.Status),
+		ExpiresAt:   timestamppb.New(o.StorageExpire),
+		Weight:      o.Weight,
+		TotalPrice:  o.Price,
+		PackageType: &packageType,
+		CreatedAt:   timestamppb.New(o.CreatedAt),
+		IssuedAt:    issuedAt,
+		ReturnedAt:  returnedAt,
+		ArchivedAt:  archivedAt,
+	}
+}
+
+func toGRPCError(err error) error {
 	switch {
 	case errors.Is(err, order.ErrEmptyOrderID),
 		errors.Is(err, order.ErrEmptyUserID),

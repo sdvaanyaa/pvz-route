@@ -10,7 +10,7 @@ import (
 
 const (
 	storagePath = "data"
-	grpcAddress = "localhost:50053" //TODO
+	grpcAddress = "localhost:50040"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	defer cancel()
 
 	if err = grpcServer.Run(ctx, grpcAddress); err != nil {
-		log.Fatalf("failed to run grpc server: %v", err)
+		log.Fatalf("failed to run grpcmw server: %v", err)
 	}
 
 	//cli.Setup(orderService)

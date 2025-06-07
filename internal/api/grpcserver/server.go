@@ -4,13 +4,21 @@ import (
 	"context"
 	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/api/gen"
-	middleware "gitlab.ozon.dev/sd_vaanyaa/homework/internal/middleware/grpc"
+	middleware "gitlab.ozon.dev/sd_vaanyaa/homework/internal/middleware/grpcmw"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/packaging"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
+)
+
+const (
+	defaultLastN = 0
+	defaultPage  = 1
+	defaultLimit = 0
+	defaultInPVZ = false
 )
 
 type Server struct {
@@ -27,6 +35,7 @@ func New(orderSvc order.Service) *Server {
 
 	server.grpcServer = grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			middleware.LoggingInterceptor(),
 			middleware.ValidationInterceptor(),
 		),
 	)
@@ -44,22 +53,15 @@ func (s *Server) Run(ctx context.Context, addr string) error {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	log.Printf("grpc server listening at %s", addr)
+	log.Printf("grpcmw server listening at %s", addr)
 
 	return s.grpcServer.Serve(listener)
 }
 
 func (s *Server) Accept(ctx context.Context, req *gen.AcceptOrderRequest) (*gen.OrderResponse, error) {
-	log.Printf(
-		"Accept request: order_id = %s, user_id = %s, expires_at = %s",
-		req.OrderId,
-		req.UserId,
-		req.ExpiresAt,
-	)
-
 	packageType := packaging.PackageNone
 	if req.PackageType != nil {
-		packageType = packageTypeToString(*req.PackageType)
+		packageType = protoPackageTypeToString(*req.PackageType)
 	}
 
 	o, err := s.orderSvc.Accept(
@@ -72,29 +74,106 @@ func (s *Server) Accept(ctx context.Context, req *gen.AcceptOrderRequest) (*gen.
 	)
 
 	if err != nil {
-		log.Printf("failed to accept order: %v", err)
-		return nil, mapError(err)
+		return nil, toGRPCError(err)
 	}
 
-	log.Printf("accepted order successfully: order_id = %s, status = %s", o.ID, o.Status)
 	return &gen.OrderResponse{
 		OrderId: o.ID,
-		Status:  statusToProto(o.Status),
+		Status:  stringStatusToProto(o.Status),
 	}, nil
 }
 
 func (s *Server) Return(ctx context.Context, req *gen.OrderIdRequest) (*gen.OrderResponse, error) {
-	log.Printf("Return request: order_id = %s", req.OrderId)
-
 	if err := s.orderSvc.Return(req.OrderId); err != nil {
-		log.Printf("failed to return order: order_id = %s, error: %v", req.OrderId, err)
-		return nil, mapError(err)
+		return nil, toGRPCError(err)
 	}
-
-	log.Printf("Order returned successfully: order_id = %s, status = archived", req.OrderId)
 
 	return &gen.OrderResponse{
 		OrderId: req.OrderId,
 		Status:  gen.OrderStatus_ORDER_STATUS_ARCHIVED,
 	}, nil
+}
+
+func (s *Server) Process(ctx context.Context, req *gen.ProcessOrdersRequest) (*gen.ProcessResult, error) {
+	result := &gen.ProcessResult{}
+
+	for _, orderID := range req.OrderIds {
+		if err := s.orderSvc.Process(req.UserId, orderID, protoActionToString(req.Action)); err != nil {
+			result.Errors = append(result.Errors, orderID)
+			continue
+		}
+		result.Processed = append(result.Processed, orderID)
+	}
+
+	return result, nil
+}
+
+func (s *Server) ListOrders(ctx context.Context, req *gen.ListOrdersRequest) (*gen.OrdersList, error) {
+	lastN := defaultLastN
+	if req.LastN != nil {
+		lastN = int(*req.LastN)
+	}
+
+	page, limit := defaultPage, defaultLimit
+	if req.Pagination != nil {
+		page = int(req.Pagination.Page)
+		limit = int(req.Pagination.CountOnPage)
+	}
+
+	inPVZ := defaultInPVZ
+	if req.InPvz != nil {
+		inPVZ = *req.InPvz
+	}
+
+	orders, total, err := s.orderSvc.ListOrders(req.UserId, inPVZ, lastN, page, limit)
+	if err != nil {
+		return nil, toGRPCError(err)
+	}
+
+	resp := &gen.OrdersList{
+		Total: int32(total),
+	}
+	for _, o := range orders {
+		resp.Orders = append(resp.Orders, modelsOrderToProto(o))
+	}
+
+	return resp, nil
+}
+
+func (s *Server) ListReturns(ctx context.Context, req *gen.ListReturnsRequest) (*gen.ReturnsList, error) {
+	page, limit := defaultPage, defaultLimit
+	if req.Pagination != nil {
+		page = int(req.Pagination.Page)
+		limit = int(req.Pagination.CountOnPage)
+	}
+
+	orders, err := s.orderSvc.ListReturns(page, limit)
+	if err != nil {
+		return nil, toGRPCError(err)
+	}
+
+	resp := &gen.ReturnsList{}
+	for _, o := range orders {
+		resp.Returns = append(resp.Returns, modelsOrderToProto(o))
+	}
+
+	return resp, nil
+}
+
+func (s *Server) History(ctx context.Context, _ *gen.GetHistoryRequest) (*gen.OrderHistoryList, error) {
+	entries, err := s.orderSvc.History()
+	if err != nil {
+		return nil, toGRPCError(err)
+	}
+
+	resp := &gen.OrderHistoryList{}
+	for _, entry := range entries {
+		resp.History = append(resp.History, &gen.OrderHistory{
+			OrderId:   entry.OrderID,
+			Status:    stringStatusToProto(entry.Status),
+			CreatedAt: timestamppb.New(entry.Timestamp),
+		})
+	}
+
+	return resp, nil
 }
