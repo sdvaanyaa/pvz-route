@@ -5,7 +5,7 @@ package pvz;
 option go_package = "gitlab.ozon.dev/sd_vaanyaa/homework/api/gen";
 
 import "google/protobuf/timestamp.proto";
-//import "validate/validate.proto";
+import "validate/validate.proto";
 
 service OrderService {
   rpc Accept(AcceptOrderRequest) returns (OrderResponse);
@@ -17,16 +17,16 @@ service OrderService {
 }
 
 message AcceptOrderRequest {
-  string order_id = 1;
-  string user_id = 2;
-  google.protobuf.Timestamp expires_at = 3;
+  string order_id = 1 [(validate.rules).string.min_len = 1];
+  string user_id = 2 [(validate.rules).string.min_len = 1];
+  google.protobuf.Timestamp expires_at = 3 [(validate.rules).timestamp.required = true];
   optional PackageType package_type = 4;
-  float weight = 5;
-  float price = 6;
+  double weight = 5 [(validate.rules).double.gt = 0];
+  double price = 6 [(validate.rules).double.gt = 0];
 }
 
 message OrderIdRequest {
-  string order_id = 1;
+  string order_id = 1 [(validate.rules).string.min_len = 1];
 }
 
 message OrderResponse {
@@ -35,9 +35,9 @@ message OrderResponse {
 }
 
 message ProcessOrdersRequest {
-  string user_id = 1;
-  ActionType action = 2;
-  repeated string order_ids = 3;
+  string user_id = 1 [(validate.rules).string.min_len = 1];
+  ActionType action = 2 [(validate.rules).enum.defined_only = true];
+  repeated string order_ids = 3 [(validate.rules).repeated.min_items = 1];
 }
 
 message ProcessResult {
@@ -46,8 +46,8 @@ message ProcessResult {
 }
 
 message ListOrdersRequest {
-  string user_id = 1;
-  bool in_pvz = 2;
+  string user_id = 1 [(validate.rules).string.min_len = 1];
+  optional bool in_pvz = 2;
   optional uint32 last_n = 3;
   optional Pagination pagination = 4;
 }
@@ -58,16 +58,14 @@ message OrdersList {
 }
 
 message ListReturnsRequest {
-  Pagination pagination = 1;
+  optional Pagination pagination = 1;
 }
 
 message ReturnsList {
   repeated Order returns = 1;
 }
 
-message GetHistoryRequest {
-  Pagination pagination = 1;
-}
+message GetHistoryRequest {}
 
 message OrderHistoryList {
   repeated OrderHistory history = 1;
@@ -78,8 +76,8 @@ message Order {
   string user_id = 2;
   OrderStatus status = 3;
   google.protobuf.Timestamp expires_at = 4;
-  float weight = 5;
-  float total_price = 6;
+  double weight = 5;
+  double total_price = 6;
   optional PackageType package_type = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp issued_at = 9;

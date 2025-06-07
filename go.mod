@@ -3,6 +3,7 @@ module gitlab.ozon.dev/sd_vaanyaa/homework
 go 1.24
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	google.golang.org/grpc v1.73.0

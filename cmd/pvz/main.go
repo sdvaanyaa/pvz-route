@@ -1,21 +1,35 @@
 package main
 
 import (
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/cli"
+	"context"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/api/grpcserver"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/services/order"
-	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage/json_storage"
+	"gitlab.ozon.dev/sd_vaanyaa/homework/internal/storage/jsonstorage"
 	"log"
 )
 
-const storagePath = "data"
+const (
+	storagePath = "data"
+	grpcAddress = "localhost:50053" //TODO
+)
 
 func main() {
-	storage, err := json_storage.New(storagePath)
+	storage, err := jsonstorage.New(storagePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to init json storage: %v", err)
 	}
 
 	orderService := order.New(storage)
-	cli.Setup(orderService)
-	cli.Execute()
+
+	grpcServer := grpcserver.New(orderService)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err = grpcServer.Run(ctx, grpcAddress); err != nil {
+		log.Fatalf("failed to run grpc server: %v", err)
+	}
+
+	//cli.Setup(orderService)
+	//cli.Execute()
 }
