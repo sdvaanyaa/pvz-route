@@ -23,6 +23,19 @@ func (s *orderService) Accept(
 		return nil, ErrInvalidDeadlineFormat
 	}
 
+	if time.Now().After(storageExpire) {
+		return nil, ErrOrderExpired
+	}
+
+	existingOrders, err := s.storage.GetOrder(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	if existingOrders != nil {
+		return nil, ErrOrderAlreadyExists
+	}
+
 	if packageType == "" {
 		packageType = packaging.PackageNone
 	}

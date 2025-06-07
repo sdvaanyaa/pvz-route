@@ -129,8 +129,15 @@ func toGRPCError(err error) error {
 		errors.Is(err, order.ErrStorageExpired),
 		errors.Is(err, order.ErrOrderIssued),
 		errors.Is(err, order.ErrOrderNotIssued),
-		errors.Is(err, order.ErrOrderNotAccepted):
+		errors.Is(err, order.ErrOrderNotAccepted),
+		errors.Is(err, order.ErrOrderExpired):
 		return status.Error(codes.FailedPrecondition, err.Error())
+
+	case errors.Is(err, order.ErrOrderAlreadyExists):
+		return status.Error(codes.AlreadyExists, err.Error())
+
+	case errors.Is(err, order.ErrOrderNotFound):
+		return status.Error(codes.NotFound, err.Error())
 
 	case
 		errors.Is(err, order.ErrOrderNotBelongsToUser):

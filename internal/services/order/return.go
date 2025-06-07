@@ -17,6 +17,10 @@ func (s *orderService) Return(orderID string) error {
 		return err
 	}
 
+	if order == nil {
+		return ErrOrderNotFound
+	}
+
 	if order.StorageExpire.After(time.Now()) {
 		return ErrStorageNotExpired
 	}

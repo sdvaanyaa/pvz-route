@@ -25,6 +25,10 @@ func (s *orderService) Process(userID, orderID, action string) error {
 		return err
 	}
 
+	if order == nil {
+		return ErrOrderNotFound
+	}
+
 	if order.UserID != userID {
 		return ErrOrderNotBelongsToUser
 	}
