@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gitlab.ozon.dev/sd_vaanyaa/homework/api/gen"
 	middleware "gitlab.ozon.dev/sd_vaanyaa/homework/internal/middleware/grpcmw"
@@ -37,9 +38,9 @@ func New(orderSvc order.Service) *Server {
 
 	server.grpcServer = grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			middleware.RateLimiter(defaultRPS),
 			middleware.LoggingInterceptor(),
 			middleware.ValidationInterceptor(),
-			middleware.RateLimiter(defaultRPS),
 		),
 	)
 	gen.RegisterOrderServiceServer(server.grpcServer, server)
@@ -49,16 +50,25 @@ func New(orderSvc order.Service) *Server {
 	return server
 }
 
-// Run starts the gRPC server on the given address.
+// Run starts the gRPC server and stops on context cancellation.
 func (s *Server) Run(ctx context.Context, addr string) error {
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	log.Printf("grpcmw server listening at %s", addr)
+	log.Printf("gRPC server listening at %s", addr)
 
-	return s.grpcServer.Serve(listener)
+	go func() {
+		if err = s.grpcServer.Serve(listener); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+			log.Printf("gRPC serve error: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Println("stopping gRPC server...")
+	s.grpcServer.GracefulStop()
+	return nil
 }
 
 func (s *Server) Accept(ctx context.Context, req *gen.AcceptOrderRequest) (*gen.OrderResponse, error) {

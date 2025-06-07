@@ -6,21 +6,55 @@ option go_package = "gitlab.ozon.dev/sd_vaanyaa/homework/api/gen";
 
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 service OrderService {
-  rpc Accept(AcceptOrderRequest) returns (OrderResponse);
-  rpc Return(OrderIdRequest) returns (OrderResponse);
-  rpc Process(ProcessOrdersRequest) returns (ProcessResult);
-  rpc ListOrders(ListOrdersRequest) returns (OrdersList);
-  rpc ListReturns(ListReturnsRequest) returns (ReturnsList);
-  rpc History(GetHistoryRequest) returns (OrderHistoryList);
+  rpc Accept(AcceptOrderRequest) returns (OrderResponse) {
+    option (google.api.http) = {
+      post: "/orders/accept"
+      body: "*"
+    };
+  }
+
+  rpc Return(OrderIdRequest) returns (OrderResponse) {
+    option (google.api.http) = {
+      post: "/orders/return"
+      body: "*"
+    };
+  }
+
+  rpc Process(ProcessOrdersRequest) returns (ProcessResult) {
+    option (google.api.http) = {
+      post: "/orders/process"
+      body: "*"
+    };
+  }
+
+  rpc ListOrders(ListOrdersRequest) returns (OrdersList) {
+    option (google.api.http) = {
+      get: "/orders"
+    };
+  }
+
+  rpc ListReturns(ListReturnsRequest) returns (ReturnsList) {
+    option (google.api.http) = {
+      get: "/returns"
+    };
+  }
+
+  rpc History(GetHistoryRequest) returns (OrderHistoryList) {
+    option (google.api.http) = {
+      get: "/history"
+    };
+  }
 }
 
 message AcceptOrderRequest {
   string order_id = 1 [(validate.rules).string.min_len = 1];
   string user_id = 2 [(validate.rules).string.min_len = 1];
   google.protobuf.Timestamp expires_at = 3 [(validate.rules).timestamp.required = true];
-  optional PackageType package_type = 4 [(validate.rules).enum.defined_only = true];;
+  optional PackageType package_type = 4 [(validate.rules).enum.defined_only = true];
   double weight = 5 [(validate.rules).double.gt = 0];
   double price = 6 [(validate.rules).double.gt = 0];
 }
