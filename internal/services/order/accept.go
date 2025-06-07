@@ -14,7 +14,7 @@ func (s *orderService) Accept(
 	weight, price float64,
 	packageType string,
 ) (*models.Order, error) {
-	if err := validateInputs(orderID, userID, price, weight); err != nil {
+	if err := validateInputsAccept(orderID, userID, price, weight); err != nil {
 		return nil, err
 	}
 
@@ -82,7 +82,7 @@ func newOrder(
 	}
 }
 
-func validateInputs(orderID, userID string, price, weight float64) error {
+func validateInputsAccept(orderID, userID string, price, weight float64) error {
 	if orderID == "" {
 		return ErrEmptyOrderID
 	}

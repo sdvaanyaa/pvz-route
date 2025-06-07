@@ -12,12 +12,8 @@ const returnWindow = 48 * time.Hour
 // It validates inputs, verifies order ownership and status,
 // updates the order status accordingly, and saves changes to storage.
 func (s *orderService) Process(userID, orderID, action string) error {
-	if userID == "" {
-		return ErrEmptyUserID
-	}
-
-	if orderID == "" {
-		return ErrEmptyOrderID
+	if err := validateInputsProcess(userID, orderID); err != nil {
+		return err
 	}
 
 	order, err := s.storage.GetOrder(orderID)
@@ -48,6 +44,18 @@ func (s *orderService) Process(userID, orderID, action string) error {
 
 	if err = s.storage.UpdateOrder(order); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func validateInputsProcess(orderID, userID string) error {
+	if userID == "" {
+		return ErrEmptyUserID
+	}
+
+	if orderID == "" {
+		return ErrEmptyOrderID
 	}
 
 	return nil

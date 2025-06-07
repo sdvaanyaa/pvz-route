@@ -19,6 +19,8 @@ const (
 	defaultPage  = 1
 	defaultLimit = 0
 	defaultInPVZ = false
+
+	defaultRPS = 5
 )
 
 type Server struct {
@@ -37,6 +39,7 @@ func New(orderSvc order.Service) *Server {
 		grpc.ChainUnaryInterceptor(
 			middleware.LoggingInterceptor(),
 			middleware.ValidationInterceptor(),
+			middleware.RateLimiter(defaultRPS),
 		),
 	)
 	gen.RegisterOrderServiceServer(server.grpcServer, server)
