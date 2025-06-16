@@ -1,1 +1,142 @@
-[]
+[
+  {
+    "id": "order123",
+    "user_id": "user123",
+    "storage_deadline": "2025-06-06T00:00:00Z",
+    "status": "archived",
+    "created_at": "2025-06-07T14:26:40.479993+03:00",
+    "issued_at": null,
+    "returned_at": "2025-06-07T14:29:21.34187+03:00",
+    "archived_at": "2025-06-07T14:30:50.866807+03:00",
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T14:26:40.479993+03:00"
+      },
+      {
+        "status": "issued",
+        "timestamp": "2025-06-07T14:28:45.363695+03:00"
+      },
+      {
+        "status": "returned",
+        "timestamp": "2025-06-07T14:29:21.34187+03:00"
+      },
+      {
+        "status": "archived",
+        "timestamp": "2025-06-07T14:30:50.866807+03:00"
+      }
+    ],
+    "weight": 85,
+    "price": 937,
+    "package": "film"
+  },
+  {
+    "id": "1",
+    "user_id": "2",
+    "storage_deadline": "2025-06-02T00:00:00Z",
+    "status": "archived",
+    "created_at": "2025-06-07T14:32:45.522682+03:00",
+    "issued_at": null,
+    "returned_at": "2025-06-07T14:58:55.452342+03:00",
+    "archived_at": "2025-06-07T14:59:19.650783+03:00",
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T14:32:45.522682+03:00"
+      },
+      {
+        "status": "issued",
+        "timestamp": "2025-06-07T14:56:22.11714+03:00"
+      },
+      {
+        "status": "returned",
+        "timestamp": "2025-06-07T14:58:55.452342+03:00"
+      },
+      {
+        "status": "archived",
+        "timestamp": "2025-06-07T14:59:19.650783+03:00"
+      }
+    ],
+    "weight": 1,
+    "price": 20,
+    "package": "none"
+  },
+  {
+    "id": "2",
+    "user_id": "2",
+    "storage_deadline": "2052-08-10T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-06-07T14:55:11.907969+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T14:55:11.907969+03:00"
+      }
+    ],
+    "weight": 2,
+    "price": 2,
+    "package": "film"
+  },
+  {
+    "id": "222",
+    "user_id": "2",
+    "storage_deadline": "2293-11-28T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-06-07T16:22:59.452783+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T16:22:59.452783+03:00"
+      }
+    ],
+    "weight": 2051,
+    "price": 7323.1329,
+    "package": "none"
+  },
+  {
+    "id": "200",
+    "user_id": "2",
+    "storage_deadline": "2026-01-02T00:00:00Z",
+    "status": "accepted",
+    "created_at": "2025-06-07T21:39:00.059342+03:00",
+    "issued_at": null,
+    "returned_at": null,
+    "archived_at": null,
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T21:39:00.059342+03:00"
+      }
+    ],
+    "weight": 100,
+    "price": 200,
+    "package": "none"
+  },
+  {
+    "id": "22",
+    "user_id": "2",
+    "storage_deadline": "2025-06-06T00:00:00Z",
+    "status": "issued",
+    "created_at": "2025-06-07T22:53:55.519479+03:00",
+    "issued_at": "2025-06-07T22:54:20.994408+03:00",
+    "history": [
+      {
+        "status": "accepted",
+        "timestamp": "2025-06-07T22:53:55.519479+03:00"
+      },
+      {
+        "status": "issued",
+        "timestamp": "2025-06-07T22:54:20.994408+03:00"
+      }
+    ],
+    "weight": 1,
+    "price": 1,
+    "package": "none"
+  }
+]
