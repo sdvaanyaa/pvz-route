@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package pvz;
+
+option go_package = "gitlab.ozon.dev/sd_vaanyaa/homework/api/gen";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service OrderService {
+  rpc Accept(AcceptOrderRequest) returns (OrderResponse) {
+    option (google.api.http) = {
+      post: "/orders/accept"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Accept a new order"
+      description: "Creates a new order with specified details."
+    };
+  }
+
+  rpc Return(OrderIdRequest) returns (OrderResponse) {
+    option (google.api.http) = {
+      post: "/orders/return"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Return an order"
+      description: "Marks an order as returned."
+    };
+  }
+
+  rpc Process(ProcessOrdersRequest) returns (ProcessResult) {
+    option (google.api.http) = {
+      post: "/orders/process"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Process multiple orders"
+      description: "Performs an action on multiple orders."
+    };
+  }
+
+  rpc ListOrders(ListOrdersRequest) returns (OrdersList) {
+    option (google.api.http) = {
+      get: "/orders"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "List orders"
+      description: "Retrieves a list of orders for a user."
+    };
+  }
+
+  rpc ListReturns(ListReturnsRequest) returns (ReturnsList) {
+    option (google.api.http) = {
+      get: "/returns"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "List returned orders"
+      description: "Retrieves a list of returned orders."
+    };
+  }
+
+  rpc History(GetHistoryRequest) returns (OrderHistoryList) {
+    option (google.api.http) = {
+      get: "/history"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get order history"
+      description: "Retrieves the history of order status changes."
+    };
+  }
+}
+
+message AcceptOrderRequest {
+  string order_id = 1 [(validate.rules).string.min_len = 1];
+  string user_id = 2 [(validate.rules).string.min_len = 1];
+  google.protobuf.Timestamp expires_at = 3 [(validate.rules).timestamp.required = true];
+  optional PackageType package_type = 4 [(validate.rules).enum.defined_only = true];
+  double weight = 5 [(validate.rules).double.gt = 0];
+  double price = 6 [(validate.rules).double.gt = 0];
+}
+
+message OrderIdRequest {
+  string order_id = 1 [(validate.rules).string.min_len = 1];
+}
+
+message OrderResponse {
+  string order_id = 1;
+  OrderStatus status = 2;
+}
+
+message ProcessOrdersRequest {
+  string user_id = 1 [(validate.rules).string.min_len = 1];
+  ActionType action = 2 [(validate.rules).enum.defined_only = true];
+  repeated string order_ids = 3 [(validate.rules).repeated.min_items = 1];
+}
+
+message ProcessResult {
+  repeated string processed = 1;
+  repeated string errors = 2;
+}
+
+message ListOrdersRequest {
+  string user_id = 1 [(validate.rules).string.min_len = 1];
+  optional bool in_pvz = 2;
+  optional uint32 last_n = 3;
+  optional Pagination pagination = 4;
+}
+
+message OrdersList {
+  repeated Order orders = 1;
+  int32 total = 2;
+}
+
+message ListReturnsRequest {
+  optional Pagination pagination = 1;
+}
+
+message ReturnsList {
+  repeated Order returns = 1;
+}
+
+message GetHistoryRequest {}
+
+message OrderHistoryList {
+  repeated OrderHistory history = 1;
+}
+
+message Order {
+  string order_id = 1;
+  string user_id = 2;
+  OrderStatus status = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  double weight = 5;
+  double total_price = 6;
+  optional PackageType package_type = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp issued_at = 9;
+  google.protobuf.Timestamp returned_at = 10;
+  google.protobuf.Timestamp archived_at = 11;
+}
+
+message OrderHistory {
+  string order_id = 1;
+  OrderStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_ACCEPTED = 1;
+  ORDER_STATUS_ISSUED = 2;
+  ORDER_STATUS_RETURNED = 3;
+  ORDER_STATUS_ARCHIVED = 4;
+}
+
+enum PackageType {
+  PACKAGE_TYPE_UNSPECIFIED = 0;
+  PACKAGE_TYPE_NONE = 1;
+  PACKAGE_TYPE_BAG = 2;
+  PACKAGE_TYPE_BOX = 3;
+  PACKAGE_TYPE_FILM = 4;
+  PACKAGE_TYPE_BAG_FILM = 5;
+  PACKAGE_TYPE_BOX_FILM = 6;
+}
+
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+  ACTION_TYPE_ISSUE = 1;
+  ACTION_TYPE_RETURN = 2;
+}
+
+message Pagination {
+  uint32 page = 1 [(validate.rules).uint32.lte = 100000];
+  uint32 count_on_page = 2 [(validate.rules).uint32.lte = 100000];
+}
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "PVZ Service";
+    version: "1.0.0";
+    description: "Service for order management at the point of delivery.";
+  };
+  host: "localhost:8080";
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+};

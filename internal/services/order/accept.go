@@ -14,13 +14,26 @@ func (s *orderService) Accept(
 	weight, price float64,
 	packageType string,
 ) (*models.Order, error) {
-	if err := validateInputs(orderID, userID, price, weight); err != nil {
+	if err := validateInputsAccept(orderID, userID, price, weight); err != nil {
 		return nil, err
 	}
 
 	storageExpire, err := time.Parse(time.DateOnly, expire)
 	if err != nil {
 		return nil, ErrInvalidDeadlineFormat
+	}
+
+	if time.Now().After(storageExpire) {
+		return nil, ErrOrderExpired
+	}
+
+	existingOrders, err := s.storage.GetOrder(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	if existingOrders != nil {
+		return nil, ErrOrderAlreadyExists
 	}
 
 	if packageType == "" {
@@ -69,7 +82,7 @@ func newOrder(
 	}
 }
 
-func validateInputs(orderID, userID string, price, weight float64) error {
+func validateInputsAccept(orderID, userID string, price, weight float64) error {
 	if orderID == "" {
 		return ErrEmptyOrderID
 	}

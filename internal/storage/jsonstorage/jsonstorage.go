@@ -1,4 +1,4 @@
-package json_storage
+package jsonstorage
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 const (
@@ -19,12 +18,7 @@ type Storage struct {
 	ordersPath string
 }
 
-var (
-	ErrOrderAlreadyExists = errors.New("order already exists")
-	ErrOrderExpired       = errors.New("order expired")
-	ErrOrderNotFound      = errors.New("order not found")
-	ErrStorageIO          = errors.New("failed to access storage")
-)
+var ErrStorageIO = errors.New("failed to access storage")
 
 // New creates a new Storage instance, initializing the storage directory
 // and the orders JSON file if it does not exist.
@@ -48,16 +42,6 @@ func New(storagePath string) (*Storage, error) {
 // Validates that the order is not expired and does not already exist.
 // Returns an error if validation fails or the operation cannot be completed.
 func (s *Storage) SaveOrder(order *models.Order) error {
-	if time.Now().After(order.StorageExpire) {
-		return ErrOrderExpired
-	}
-
-	if _, err := s.GetOrder(order.ID); err == nil {
-		return ErrOrderAlreadyExists
-	} else if !errors.Is(err, ErrOrderNotFound) {
-		return err
-	}
-
 	orders, err := s.GetOrders()
 	if err != nil {
 		return err
@@ -86,7 +70,7 @@ func (s *Storage) GetOrder(orderID string) (*models.Order, error) {
 		}
 	}
 
-	return nil, ErrOrderNotFound
+	return nil, nil
 }
 
 // UpdateOrder updates an existing order in the JSON storage.
@@ -97,17 +81,11 @@ func (s *Storage) UpdateOrder(order *models.Order) error {
 		return err
 	}
 
-	var updated bool
 	for i, o := range orders {
 		if order.ID == o.ID {
 			orders[i] = order
-			updated = true
 			break
 		}
-	}
-
-	if !updated {
-		return ErrOrderNotFound
 	}
 
 	return s.SaveOrders(orders)

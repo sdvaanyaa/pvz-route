@@ -20,8 +20,8 @@ service OrdersService {
 }
 
 message AcceptOrderRequest {
-    uint64 order_id = 1;
-    uint64 user_id = 2;
+    string order_id = 1;
+    string user_id = 2;
     google.protobuf.Timestamp expires_at = 3;
     optional PackageType package = 4;
     float weight = 5;
@@ -29,13 +29,13 @@ message AcceptOrderRequest {
 }
 
 message OrderIdRequest {
-    uint64 order_id = 1;
+    string order_id = 1;
 }
 
 message ProcessOrdersRequest {
-    uint64 user_id = 1;
+    string user_id = 1;
     ActionType action = 2;
-    repeated uint64 order_ids = 3;
+    repeated string order_ids = 3;
 }
 
 enum ActionType {
@@ -48,7 +48,7 @@ enum ActionType {
 }
 
 message ListOrdersRequest {
-    uint64 user_id = 1;
+    string user_id = 1;
     bool in_pvz = 2; // если true, то будут заказы для выдачи клиенту, если false, то все
     optional uint32 last_n = 3;
     optional Pagination pagination = 4;
@@ -73,12 +73,12 @@ message GetHistoryRequest {
 
 message OrderResponse {
     OrderStatus status = 1;
-    uint64 order_id = 2;
+    string order_id = 2;
 }
 
 message ProcessResult {
-    repeated uint64 processed = 1;
-    repeated uint64 errors = 2;
+    repeated string processed = 1;
+    repeated string errors = 2;
 }
 
 message OrdersList {
@@ -96,12 +96,12 @@ message OrderHistoryList {
 
 message ImportResult {
     int32 imported = 1;
-    repeated uint64 errors = 2;
+    repeated string errors = 2;
 }
 
 message Order {
-    uint64 order_id = 1;
-    uint64 user_id = 2;
+    string order_id = 1;
+    string user_id = 2;
     OrderStatus status = 3;
     google.protobuf.Timestamp expires_at = 4;
     float weight = 5;
@@ -125,20 +125,15 @@ enum PackageType {
 }
 
 enum OrderStatus {
-    // не указан
     ORDER_STATUS_UNSPECIFIED = 0;
-    // получен, ожидает выдачи клиенту
-    ORDER_STATUS_EXPECTS = 1;
-    // выдан клиенту
-    ORDER_STATUS_ACCEPTED = 2;
-    // возвращен клиентом в пвз
-    ORDER_STATUS_RETURNED = 3;
-    // возвращен курьеру из пвз
-    ORDER_STATUS_DELETED = 4;
+    ORDER_STATUS_ACCEPTED = 1;  // получен, ожидает выдачи
+    ORDER_STATUS_ISSUED = 2;    // выдан клиенту
+    ORDER_STATUS_RETURNED = 3;  // возвращен клиентом
+    ORDER_STATUS_ARCHIVED = 4;  // возвращен курьеру
 }
 
 message OrderHistory {
-    uint64 order_id = 1;
+    string order_id = 1;
     OrderStatus status = 2;
     google.protobuf.Timestamp created_at = 3;
 }
